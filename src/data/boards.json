@@ -9,6 +9,15 @@
     "features": []
   },
   {
+    "id": "uno-r4",
+    "name": "Arduino Uno R4 WiFi",
+    "digitalPins": 14,
+    "pwmPins": 6,
+    "analogPins": 6,
+    "logicVoltage": 5.0,
+    "features": ["wifi", "bluetooth"]
+  },
+  {
     "id": "nano",
     "name": "Arduino Nano",
     "digitalPins": 14,

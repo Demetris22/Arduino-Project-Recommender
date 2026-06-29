@@ -12,6 +12,7 @@
     ],
     "boards": [
       "uno",
+      "uno-r4",
       "nano",
       "mega",
       "esp32"
@@ -52,6 +53,7 @@
     ],
     "boards": [
       "uno",
+      "uno-r4",
       "nano",
       "mega",
       "esp32"
@@ -94,6 +96,7 @@
     ],
     "boards": [
       "uno",
+      "uno-r4",
       "nano",
       "mega",
       "esp32"
@@ -136,6 +139,7 @@
     ],
     "boards": [
       "uno",
+      "uno-r4",
       "nano",
       "mega",
       "esp32"
@@ -178,6 +182,7 @@
     ],
     "boards": [
       "uno",
+      "uno-r4",
       "nano",
       "mega",
       "esp32"
@@ -217,6 +222,7 @@
     ],
     "boards": [
       "uno",
+      "uno-r4",
       "nano",
       "mega",
       "esp32"
@@ -257,6 +263,7 @@
     ],
     "boards": [
       "uno",
+      "uno-r4",
       "nano",
       "mega",
       "esp32"
@@ -303,6 +310,7 @@
     ],
     "boards": [
       "uno",
+      "uno-r4",
       "nano",
       "mega",
       "esp32"
@@ -342,6 +350,7 @@
     ],
     "boards": [
       "uno",
+      "uno-r4",
       "nano",
       "mega",
       "esp32"
@@ -388,6 +397,7 @@
     ],
     "boards": [
       "uno",
+      "uno-r4",
       "nano",
       "mega",
       "esp32"
@@ -434,6 +444,7 @@
     ],
     "boards": [
       "uno",
+      "uno-r4",
       "nano",
       "mega",
       "esp32"
@@ -477,6 +488,7 @@
     ],
     "boards": [
       "uno",
+      "uno-r4",
       "nano",
       "mega",
       "esp32"
@@ -522,6 +534,7 @@
     ],
     "boards": [
       "uno",
+      "uno-r4",
       "nano",
       "mega",
       "esp32"
@@ -627,5 +640,170 @@
       "Open that IP in a browser on the same network and use the ON/OFF links to control the LED."
     ],
     "code": "#include <WiFi.h>\n#include <WebServer.h>\n\nconst char* ssid     = \"YOUR_WIFI_NAME\";\nconst char* password = \"YOUR_WIFI_PASSWORD\";\n\nconst int ledPin = 2;\nWebServer server(80);\n\nvoid handleRoot() {\n  String html = \"<h1>ESP32 LED Control</h1>\"\n                \"<p><a href=\\\"/on\\\">Turn ON</a></p>\"\n                \"<p><a href=\\\"/off\\\">Turn OFF</a></p>\";\n  server.send(200, \"text/html\", html);\n}\n\nvoid handleOn() {\n  digitalWrite(ledPin, HIGH);\n  server.send(200, \"text/html\", \"LED is ON. <a href=\\\"/\\\">Back</a>\");\n}\n\nvoid handleOff() {\n  digitalWrite(ledPin, LOW);\n  server.send(200, \"text/html\", \"LED is OFF. <a href=\\\"/\\\">Back</a>\");\n}\n\nvoid setup() {\n  Serial.begin(115200);\n  pinMode(ledPin, OUTPUT);\n\n  WiFi.begin(ssid, password);\n  while (WiFi.status() != WL_CONNECTED) {\n    delay(500);\n    Serial.print(\".\");\n  }\n  Serial.println();\n  Serial.print(\"Open http://\");\n  Serial.println(WiFi.localIP());\n\n  server.on(\"/\", handleRoot);\n  server.on(\"/on\", handleOn);\n  server.on(\"/off\", handleOff);\n  server.begin();\n}\n\nvoid loop() {\n  server.handleClient();\n}\n"
+  },
+  {
+    "id": "r4-led-matrix-smiley",
+    "title": "LED Matrix Smiley Face",
+    "difficulty": "beginner",
+    "timeMinutes": 15,
+    "requires": [],
+    "boards": [
+      "uno-r4"
+    ],
+    "minDigitalPins": 0,
+    "minAnalogPins": 0,
+    "requiresFeatures": [],
+    "learn": [
+      "Arduino_LED_Matrix library",
+      "frame buffers",
+      "bitmaps"
+    ],
+    "tutorialUrl": "",
+    "intro": "The Uno R4 WiFi has a 12x8 LED matrix built right into the board - no wiring or extra parts needed. Draw a smiley face to learn how to drive it.",
+    "wiring": [
+      "No external wiring - the LED matrix is built into the Uno R4 WiFi"
+    ],
+    "steps": [
+      "In the Arduino IDE, select 'Arduino Uno R4 WiFi' as your board (install the UNO R4 Boards package if prompted).",
+      "Upload the sketch - the Arduino_LED_Matrix library ships with the R4 core, so there's nothing extra to install.",
+      "A smiley face lights up on the on-board LED matrix."
+    ],
+    "code": "#include \"Arduino_LED_Matrix.h\"\n\nArduinoLEDMatrix matrix;\n\n// 8 rows x 12 columns, 1 = LED on\nbyte frame[8][12] = {\n  { 0,0,0,0,0,0,0,0,0,0,0,0 },\n  { 0,0,1,1,0,0,0,0,1,1,0,0 },\n  { 0,0,1,1,0,0,0,0,1,1,0,0 },\n  { 0,0,0,0,0,0,0,0,0,0,0,0 },\n  { 0,1,0,0,0,0,0,0,0,0,1,0 },\n  { 0,1,0,0,0,0,0,0,0,0,1,0 },\n  { 0,0,1,1,1,1,1,1,1,1,0,0 },\n  { 0,0,0,0,0,0,0,0,0,0,0,0 }\n};\n\nvoid setup() {\n  matrix.begin();\n  matrix.renderBitmap(frame, 8, 12);\n}\n\nvoid loop() {\n}\n"
+  },
+  {
+    "id": "r4-led-matrix-scroll",
+    "title": "Scrolling Text on the LED Matrix",
+    "difficulty": "beginner",
+    "timeMinutes": 20,
+    "requires": [],
+    "boards": [
+      "uno-r4"
+    ],
+    "minDigitalPins": 0,
+    "minAnalogPins": 0,
+    "requiresFeatures": [],
+    "learn": [
+      "ArduinoGraphics",
+      "text scrolling",
+      "LED matrix"
+    ],
+    "tutorialUrl": "",
+    "intro": "Scroll a message across the Uno R4's built-in 12x8 LED matrix using the ArduinoGraphics text engine.",
+    "wiring": [
+      "No external wiring - the LED matrix is built into the Uno R4 WiFi"
+    ],
+    "steps": [
+      "Install the 'ArduinoGraphics' library from the Library Manager.",
+      "Select the Uno R4 WiFi board and upload the sketch.",
+      "Your message scrolls across the on-board matrix - edit the text string to change it."
+    ],
+    "code": "#include \"ArduinoGraphics.h\"\n#include \"Arduino_LED_Matrix.h\"\n\nArduinoLEDMatrix matrix;\nconst char message[] = \"  HELLO UNO R4  \";\n\nvoid setup() {\n  matrix.begin();\n}\n\nvoid loop() {\n  matrix.beginDraw();\n  matrix.stroke(0xFFFFFFFF);\n  matrix.textScrollSpeed(60);\n  matrix.textFont(Font_5x7);\n  matrix.beginText(0, 1, 0xFFFFFF);\n  matrix.println(message);\n  matrix.endText(SCROLL_LEFT);\n  matrix.endDraw();\n}\n"
+  },
+  {
+    "id": "r4-dac-waveform",
+    "title": "DAC Waveform Generator",
+    "difficulty": "intermediate",
+    "timeMinutes": 30,
+    "requires": [
+      "buzzer",
+      "jumper-wires"
+    ],
+    "boards": [
+      "uno-r4"
+    ],
+    "minDigitalPins": 0,
+    "minAnalogPins": 0,
+    "requiresFeatures": [],
+    "learn": [
+      "true DAC output",
+      "analogWriteResolution",
+      "waveforms"
+    ],
+    "tutorialUrl": "",
+    "intro": "Unlike the Uno R3's PWM, the Uno R4 has a real 12-bit DAC on pin A0. Generate a smooth sawtooth wave and hear it on a piezo buzzer.",
+    "wiring": [
+      "Buzzer + -> A0 (DAC output)",
+      "Buzzer - -> GND"
+    ],
+    "steps": [
+      "Connect the buzzer's positive leg to A0 and the other leg to GND.",
+      "Select the Uno R4 WiFi board and upload the sketch.",
+      "You'll hear a tone produced by the analog sawtooth wave. Change the step size or delay to alter the pitch."
+    ],
+    "code": "// The Uno R4's true DAC lives on pin A0.\nvoid setup() {\n  analogWriteResolution(12); // 12-bit DAC: 0-4095\n}\n\nvoid loop() {\n  // sweep the DAC output to make a sawtooth wave\n  for (int value = 0; value < 4096; value += 32) {\n    analogWrite(A0, value);\n    delayMicroseconds(40);\n  }\n}\n"
+  },
+  {
+    "id": "r4-distance-matrix",
+    "title": "Ultrasonic Distance Bar on the LED Matrix",
+    "difficulty": "intermediate",
+    "timeMinutes": 45,
+    "requires": [
+      "hc-sr04",
+      "breadboard",
+      "jumper-wires"
+    ],
+    "boards": [
+      "uno-r4"
+    ],
+    "minDigitalPins": 2,
+    "minAnalogPins": 0,
+    "requiresFeatures": [],
+    "learn": [
+      "pulse timing",
+      "map() + constrain()",
+      "LED matrix bar graph"
+    ],
+    "tutorialUrl": "",
+    "intro": "Measure distance with an HC-SR04 and show it as a live bar graph on the Uno R4's built-in LED matrix - the farther the object, the longer the bar.",
+    "wiring": [
+      "HC-SR04 VCC -> 5V",
+      "HC-SR04 GND -> GND",
+      "HC-SR04 Trig -> Pin 9",
+      "HC-SR04 Echo -> Pin 10"
+    ],
+    "steps": [
+      "Wire the HC-SR04: VCC to 5V, GND to ground, Trig to Pin 9, Echo to Pin 10.",
+      "Select the Uno R4 WiFi board and upload the sketch.",
+      "Open the Serial Monitor at 9600 baud, then move your hand toward the sensor - the bar on the matrix tracks the distance."
+    ],
+    "code": "#include \"Arduino_LED_Matrix.h\"\n\nArduinoLEDMatrix matrix;\nconst int trigPin = 9;\nconst int echoPin = 10;\nbyte frame[8][12];\n\nlong readDistanceCm() {\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n  long duration = pulseIn(echoPin, HIGH);\n  return duration * 0.0343 / 2;\n}\n\nvoid setup() {\n  matrix.begin();\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  long distance = readDistanceCm();\n  int cols = map(constrain(distance, 0, 60), 0, 60, 0, 12);\n\n  for (int r = 0; r < 8; r++) {\n    for (int c = 0; c < 12; c++) {\n      frame[r][c] = (c < cols) ? 1 : 0;\n    }\n  }\n\n  matrix.renderBitmap(frame, 8, 12);\n  Serial.println(distance);\n  delay(100);\n}\n"
+  },
+  {
+    "id": "r4-wifi-web-led",
+    "title": "Wi-Fi Web-Controlled LED (Uno R4)",
+    "difficulty": "advanced",
+    "timeMinutes": 70,
+    "requires": [
+      "led",
+      "resistor",
+      "breadboard",
+      "jumper-wires"
+    ],
+    "boards": [
+      "uno-r4"
+    ],
+    "minDigitalPins": 1,
+    "minAnalogPins": 0,
+    "requiresFeatures": [
+      "wifi"
+    ],
+    "learn": [
+      "WiFiS3 library",
+      "web server",
+      "HTTP routing"
+    ],
+    "tutorialUrl": "",
+    "intro": "Use the Uno R4 WiFi's built-in radio to host a tiny web page and switch an LED on and off from your phone or laptop. The R4 uses the WiFiS3 library (not the ESP32's WiFi.h).",
+    "wiring": [
+      "LED anode (long leg) -> 220 ohm resistor -> Pin 7",
+      "LED cathode (short leg) -> GND"
+    ],
+    "steps": [
+      "Fill in your Wi-Fi name and password in the sketch.",
+      "Wire the LED's long leg through a 220 ohm resistor to Pin 7, short leg to GND.",
+      "Select the Uno R4 WiFi board, upload, and open the Serial Monitor at 9600 baud to read the board's IP address.",
+      "Open that IP in a browser on the same network and use the ON / OFF links to control the LED."
+    ],
+    "code": "#include \"WiFiS3.h\"\n\nconst char ssid[] = \"YOUR_WIFI_NAME\";\nconst char pass[] = \"YOUR_WIFI_PASSWORD\";\n\nconst int ledPin = 7;\nWiFiServer server(80);\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(ledPin, OUTPUT);\n\n  WiFi.begin(ssid, pass);\n  while (WiFi.status() != WL_CONNECTED) {\n    delay(500);\n    Serial.print(\".\");\n  }\n  Serial.println();\n  Serial.print(\"Open http://\");\n  Serial.println(WiFi.localIP());\n  server.begin();\n}\n\nvoid loop() {\n  WiFiClient client = server.available();\n  if (!client) return;\n\n  String request = client.readStringUntil('\\r');\n  client.readStringUntil('\\n');\n\n  if (request.indexOf(\"GET /on\") >= 0) digitalWrite(ledPin, HIGH);\n  if (request.indexOf(\"GET /off\") >= 0) digitalWrite(ledPin, LOW);\n\n  client.println(\"HTTP/1.1 200 OK\");\n  client.println(\"Content-Type: text/html\");\n  client.println(\"Connection: close\");\n  client.println();\n  client.println(\"<h1>Uno R4 LED</h1>\");\n  client.println(\"<p><a href=\\\"/on\\\">Turn ON</a> | <a href=\\\"/off\\\">Turn OFF</a></p>\");\n  client.stop();\n}\n"
   }
 ]

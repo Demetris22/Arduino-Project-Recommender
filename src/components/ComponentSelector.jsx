@@ -34,21 +34,34 @@ function groupByCategory(components) {
   return [...known, ...extra].map((category) => [category, groups.get(category)]);
 }
 
-function ComponentSelector({ components, ownedIds, onToggle, onSelectAll, onClear }) {
+function ComponentSelector({
+  components,
+  ownedIds,
+  onToggle,
+  onSelectAll,
+  onClear,
+  showTitle = true,
+}) {
   const owned = new Set(ownedIds);
   const grouped = groupByCategory(components);
 
   return (
     <section className="panel" aria-labelledby="component-selector-heading">
       <div className="panel__head">
-        <div>
-          <h2 id="component-selector-heading" className="panel__title">
-            2 · Parts you own
-          </h2>
-          <p className="panel__hint">
-            Toggle everything in your kit — {owned.size} selected.
+        {showTitle ? (
+          <div>
+            <h2 id="component-selector-heading" className="panel__title">
+              2 · Parts you own
+            </h2>
+            <p className="panel__hint">
+              Toggle everything in your kit — {owned.size} selected.
+            </p>
+          </div>
+        ) : (
+          <p className="panel__hint panel__hint--count">
+            {owned.size} selected
           </p>
-        </div>
+        )}
         <div className="panel__actions">
           <button
             type="button"

@@ -1,15 +1,17 @@
 // Single-select board chooser. Exactly one board is always selected.
 // Surfaces a few telling specs per board so the hardware story is visible.
 
-function BoardPicker({ boards, selectedBoardId, onSelect }) {
+function BoardPicker({ boards, selectedBoardId, onSelect, showTitle = true }) {
   return (
     <section className="panel" aria-labelledby="board-picker-heading">
-      <div className="panel__head">
-        <h2 id="board-picker-heading" className="panel__title">
-          1 · Your board
-        </h2>
-        <p className="panel__hint">Pick the Arduino you're building with.</p>
-      </div>
+      {showTitle && (
+        <div className="panel__head">
+          <h2 id="board-picker-heading" className="panel__title">
+            1 · Your board
+          </h2>
+          <p className="panel__hint">Pick the Arduino you're building with.</p>
+        </div>
+      )}
 
       <div className="board-grid" role="radiogroup" aria-label="Arduino board">
         {boards.map((board) => {

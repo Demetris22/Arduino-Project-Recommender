@@ -13,7 +13,7 @@ function recWording(rec) {
   return { verb: 'needed for', count: rec.neededByCount };
 }
 
-function NextPurchase({ recommendations, onAdd }) {
+function NextPurchase({ recommendations, onAdd, onDismiss }) {
   const [expanded, setExpanded] = useState(false);
 
   if (recommendations.length === 0) return null;
@@ -24,9 +24,21 @@ function NextPurchase({ recommendations, onAdd }) {
 
   return (
     <section className="next-buy" aria-labelledby="next-buy-heading">
-      <p className="next-buy__eyebrow" id="next-buy-heading">
-        <span aria-hidden="true">⚡</span> Best next purchase
-      </p>
+      <div className="next-buy__top">
+        <p className="next-buy__eyebrow" id="next-buy-heading">
+          <span aria-hidden="true">⚡</span> Best next purchase
+        </p>
+        {onDismiss && (
+          <button
+            type="button"
+            className="next-buy__dismiss"
+            onClick={onDismiss}
+            aria-label="Hide buy suggestions"
+          >
+            ✕
+          </button>
+        )}
+      </div>
 
       <button
         type="button"

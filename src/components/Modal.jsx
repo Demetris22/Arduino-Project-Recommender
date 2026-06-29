@@ -46,13 +46,31 @@ function Modal({ titleId, onClose, children }) {
 
     document.addEventListener('keydown', handleKeyDown);
 
-    // Lock background scroll while open.
+    // Lock background scroll while open, reserving the scrollbar's width so
+    // hiding overflow doesn't reflow the page sideways. Modern engines handle
+    // this via `scrollbar-gutter: stable` (see index.css); this is the
+    // cross-browser fallback for engines without it.
+    //
+    // We measure the width the lock actually reclaims (clientWidth before vs.
+    // after hiding overflow) rather than innerWidth - clientWidth: with a
+    // stable gutter the latter reports the gutter width even when no scrollbar
+    // is visible, which would over-pad. The delta is 0 when the gutter is
+    // stable and equals the scrollbar width otherwise.
     const prevOverflow = document.body.style.overflow;
+    const prevPaddingRight = document.body.style.paddingRight;
+    const widthBefore = document.documentElement.clientWidth;
     document.body.style.overflow = 'hidden';
+    const scrollbarWidth = document.documentElement.clientWidth - widthBefore;
+    if (scrollbarWidth > 0) {
+      const currentPadding =
+        parseFloat(window.getComputedStyle(document.body).paddingRight) || 0;
+      document.body.style.paddingRight = `${currentPadding + scrollbarWidth}px`;
+    }
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = prevOverflow;
+      document.body.style.paddingRight = prevPaddingRight;
       // Return focus to whatever opened the dialog (the card).
       previouslyFocused.current?.focus?.();
     };

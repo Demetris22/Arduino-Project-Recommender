@@ -1,0 +1,631 @@
+[
+  {
+    "id": "blink-led",
+    "title": "Blink an LED",
+    "difficulty": "beginner",
+    "timeMinutes": 15,
+    "requires": [
+      "led",
+      "resistor",
+      "breadboard",
+      "jumper-wires"
+    ],
+    "boards": [
+      "uno",
+      "nano",
+      "mega",
+      "esp32"
+    ],
+    "minDigitalPins": 1,
+    "minAnalogPins": 0,
+    "requiresFeatures": [],
+    "learn": [
+      "digitalWrite",
+      "delay",
+      "basic circuits"
+    ],
+    "tutorialUrl": "",
+    "intro": "The classic first Arduino project: make an LED switch on and off once per second. It teaches you the upload cycle and basic digital output.",
+    "wiring": [
+      "LED anode (long leg) → 220Ω resistor → Pin 7",
+      "LED cathode (short leg) → GND"
+    ],
+    "steps": [
+      "Put the LED on the breadboard, with the two legs in different rows.",
+      "Connect a 220Ω resistor from the long leg's row to digital Pin 7.",
+      "Connect the short leg to a GND pin.",
+      "Upload the sketch. The LED should blink on and off every second."
+    ],
+    "code": "const int ledPin = 7;\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  digitalWrite(ledPin, HIGH);\n  delay(1000);\n  digitalWrite(ledPin, LOW);\n  delay(1000);\n}\n"
+  },
+  {
+    "id": "button-controlled-led",
+    "title": "Button-Controlled LED",
+    "difficulty": "beginner",
+    "timeMinutes": 20,
+    "requires": [
+      "push-button",
+      "led",
+      "resistor",
+      "breadboard",
+      "jumper-wires"
+    ],
+    "boards": [
+      "uno",
+      "nano",
+      "mega",
+      "esp32"
+    ],
+    "minDigitalPins": 2,
+    "minAnalogPins": 0,
+    "requiresFeatures": [],
+    "learn": [
+      "digitalRead",
+      "pull-up resistors",
+      "debouncing"
+    ],
+    "tutorialUrl": "",
+    "intro": "Read a push button and use it to control an LED. Uses the internal pull-up resistor so you don't need an extra one for the button.",
+    "wiring": [
+      "Push button leg A → Pin 2",
+      "Push button leg B → GND",
+      "LED anode (long leg) → 220Ω resistor → Pin 7",
+      "LED cathode (short leg) → GND"
+    ],
+    "steps": [
+      "Place the button across the breadboard's centre gap.",
+      "Wire one side of the button to Pin 2, the other to GND.",
+      "Wire the LED: long leg through a 220Ω resistor to Pin 7, short leg to GND.",
+      "Upload the sketch. The LED lights only while the button is held."
+    ],
+    "code": "const int buttonPin = 2;\nconst int ledPin = 7;\n\nvoid setup() {\n  pinMode(buttonPin, INPUT_PULLUP); // button reads LOW when pressed\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  if (digitalRead(buttonPin) == LOW) {\n    digitalWrite(ledPin, HIGH);\n  } else {\n    digitalWrite(ledPin, LOW);\n  }\n}\n"
+  },
+  {
+    "id": "potentiometer-dimmer",
+    "title": "Potentiometer LED Dimmer",
+    "difficulty": "beginner",
+    "timeMinutes": 25,
+    "requires": [
+      "potentiometer",
+      "led",
+      "resistor",
+      "breadboard",
+      "jumper-wires"
+    ],
+    "boards": [
+      "uno",
+      "nano",
+      "mega",
+      "esp32"
+    ],
+    "minDigitalPins": 1,
+    "minAnalogPins": 1,
+    "requiresFeatures": [],
+    "learn": [
+      "analogRead",
+      "PWM output",
+      "map()"
+    ],
+    "tutorialUrl": "",
+    "intro": "Turn a potentiometer to smoothly dim an LED. Introduces reading an analog input and writing a PWM output.",
+    "wiring": [
+      "Potentiometer outer pin 1 → 5V",
+      "Potentiometer outer pin 2 → GND",
+      "Potentiometer middle pin (wiper) → A0",
+      "LED anode (long leg) → 220Ω resistor → Pin 9",
+      "LED cathode (short leg) → GND"
+    ],
+    "steps": [
+      "Wire the potentiometer's outer pins to 5V and GND, and its middle pin to A0.",
+      "Wire the LED's long leg through a resistor to PWM Pin 9, short leg to GND.",
+      "Upload the sketch and turn the knob to change brightness."
+    ],
+    "code": "const int potPin = A0;\nconst int ledPin = 9; // must be a PWM-capable pin\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  int value = analogRead(potPin);              // 0-1023\n  int brightness = map(value, 0, 1023, 0, 255); // scale to 0-255\n  analogWrite(ledPin, brightness);\n}\n"
+  },
+  {
+    "id": "light-sensor-nightlight",
+    "title": "Automatic Night Light",
+    "difficulty": "beginner",
+    "timeMinutes": 30,
+    "requires": [
+      "photoresistor",
+      "resistor",
+      "led",
+      "breadboard",
+      "jumper-wires"
+    ],
+    "boards": [
+      "uno",
+      "nano",
+      "mega",
+      "esp32"
+    ],
+    "minDigitalPins": 1,
+    "minAnalogPins": 1,
+    "requiresFeatures": [],
+    "learn": [
+      "voltage divider",
+      "analogRead",
+      "thresholds"
+    ],
+    "tutorialUrl": "",
+    "intro": "An LED that turns on automatically when it gets dark, using a photoresistor in a voltage divider. Teaches the divider circuit and threshold logic.",
+    "wiring": [
+      "Photoresistor leg 1 → 5V",
+      "Photoresistor leg 2 → A0 (junction)",
+      "10kΩ resistor → from A0 junction to GND",
+      "LED anode (long leg) → 220Ω resistor → Pin 7",
+      "LED cathode (short leg) → GND"
+    ],
+    "steps": [
+      "Build a voltage divider: photoresistor from 5V to A0, and a 10kΩ resistor from A0 to GND.",
+      "Wire the LED's long leg through a resistor to Pin 7, short leg to GND.",
+      "Upload the sketch and open the Serial Monitor (9600 baud) to see the light reading.",
+      "Cover the sensor: the LED should switch on. Tune the threshold value in code to match your room."
+    ],
+    "code": "const int ldrPin = A0;\nconst int ledPin = 7;\nconst int threshold = 500; // tune this to your lighting\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int light = analogRead(ldrPin);\n  Serial.println(light);\n\n  if (light < threshold) { // darker -> lower reading with this wiring\n    digitalWrite(ledPin, HIGH);\n  } else {\n    digitalWrite(ledPin, LOW);\n  }\n  delay(100);\n}\n"
+  },
+  {
+    "id": "rgb-mood-lamp",
+    "title": "RGB Mood Lamp",
+    "difficulty": "beginner",
+    "timeMinutes": 30,
+    "requires": [
+      "rgb-led",
+      "resistor",
+      "breadboard",
+      "jumper-wires"
+    ],
+    "boards": [
+      "uno",
+      "nano",
+      "mega",
+      "esp32"
+    ],
+    "minDigitalPins": 3,
+    "minAnalogPins": 0,
+    "requiresFeatures": [],
+    "learn": [
+      "analogWrite",
+      "PWM",
+      "color mixing"
+    ],
+    "tutorialUrl": "",
+    "intro": "Cycle an RGB LED through colours by mixing red, green, and blue with PWM. Teaches how colour is made from three channels.",
+    "wiring": [
+      "RGB LED common (longest leg) → GND  (common-cathode)",
+      "Red leg → 220Ω resistor → Pin 9",
+      "Green leg → 220Ω resistor → Pin 10",
+      "Blue leg → 220Ω resistor → Pin 11"
+    ],
+    "steps": [
+      "Identify the common-cathode pin (usually the longest leg) and wire it to GND.",
+      "Wire each colour leg through its own 220Ω resistor to PWM Pins 9, 10, and 11.",
+      "Upload the sketch; the lamp cycles through colours. (If colours look inverted, you likely have a common-anode LED – wire the common leg to 5V instead.)"
+    ],
+    "code": "const int redPin = 9;\nconst int greenPin = 10;\nconst int bluePin = 11;\n\nvoid setColor(int r, int g, int b) {\n  analogWrite(redPin, r);\n  analogWrite(greenPin, g);\n  analogWrite(bluePin, b);\n}\n\nvoid setup() {\n  pinMode(redPin, OUTPUT);\n  pinMode(greenPin, OUTPUT);\n  pinMode(bluePin, OUTPUT);\n}\n\nvoid loop() {\n  setColor(255, 0, 0);   delay(1000); // red\n  setColor(0, 255, 0);   delay(1000); // green\n  setColor(0, 0, 255);   delay(1000); // blue\n  setColor(255, 0, 255); delay(1000); // magenta\n}\n"
+  },
+  {
+    "id": "piezo-melody",
+    "title": "Piezo Melody Player",
+    "difficulty": "beginner",
+    "timeMinutes": 20,
+    "requires": [
+      "buzzer",
+      "breadboard",
+      "jumper-wires"
+    ],
+    "boards": [
+      "uno",
+      "nano",
+      "mega",
+      "esp32"
+    ],
+    "minDigitalPins": 1,
+    "minAnalogPins": 0,
+    "requiresFeatures": [],
+    "learn": [
+      "tone()",
+      "frequencies",
+      "arrays"
+    ],
+    "tutorialUrl": "",
+    "intro": "Play a simple scale through a piezo buzzer using tone(). Teaches frequencies and looping over an array.",
+    "wiring": [
+      "Buzzer + → Pin 8",
+      "Buzzer − → GND"
+    ],
+    "steps": [
+      "Wire the buzzer's positive leg to Pin 8 and the other leg to GND.",
+      "Upload the sketch; you'll hear an eight-note scale repeat.",
+      "Try changing the frequency values to play your own tune."
+    ],
+    "code": "const int buzzerPin = 8;\nint melody[] = { 262, 294, 330, 349, 392, 440, 494, 523 }; // C major scale\nint noteCount = 8;\n\nvoid setup() {\n  // nothing to configure\n}\n\nvoid loop() {\n  for (int i = 0; i < noteCount; i++) {\n    tone(buzzerPin, melody[i], 300);\n    delay(350);\n  }\n  noTone(buzzerPin);\n  delay(1000);\n}\n"
+  },
+  {
+    "id": "ultrasonic-parking-sensor",
+    "title": "Ultrasonic Parking Sensor",
+    "difficulty": "beginner",
+    "timeMinutes": 45,
+    "requires": [
+      "hc-sr04",
+      "buzzer",
+      "led",
+      "resistor",
+      "breadboard",
+      "jumper-wires"
+    ],
+    "boards": [
+      "uno",
+      "nano",
+      "mega",
+      "esp32"
+    ],
+    "minDigitalPins": 4,
+    "minAnalogPins": 0,
+    "requiresFeatures": [],
+    "learn": [
+      "pulse timing",
+      "distance calculation",
+      "tone() output"
+    ],
+    "tutorialUrl": "",
+    "intro": "A reverse-parking aid: an ultrasonic sensor measures the distance to the nearest object, and a buzzer beeps faster as you get closer. An LED gives a steady warning once you're too close.",
+    "wiring": [
+      "HC-SR04 VCC → 5V",
+      "HC-SR04 GND → GND",
+      "HC-SR04 Trig → Pin 9",
+      "HC-SR04 Echo → Pin 10",
+      "Buzzer + → Pin 8",
+      "Buzzer − → GND",
+      "LED anode (long leg) → 220Ω resistor → Pin 7",
+      "LED cathode (short leg) → GND"
+    ],
+    "steps": [
+      "Place the HC-SR04, buzzer, and LED on the breadboard with room between them.",
+      "Wire the HC-SR04: VCC to 5V, GND to ground, Trig to Pin 9, Echo to Pin 10.",
+      "Connect the buzzer: positive leg to Pin 8, negative leg to ground.",
+      "Connect the LED: long leg through a 220Ω resistor to Pin 7, short leg to ground.",
+      "Upload the sketch.",
+      "Open the Serial Monitor at 9600 baud to watch the live distance, then move your hand toward the sensor to test the beep and LED."
+    ],
+    "code": "// Ultrasonic Parking Sensor\nconst int trigPin = 9;\nconst int echoPin = 10;\nconst int buzzerPin = 8;\nconst int ledPin = 7;\n\nvoid setup() {\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n  pinMode(buzzerPin, OUTPUT);\n  pinMode(ledPin, OUTPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  // Send a 10us trigger pulse\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n\n  // Measure the echo and convert to centimetres\n  long duration = pulseIn(echoPin, HIGH);\n  float distanceCm = duration * 0.0343 / 2;\n\n  Serial.print(distanceCm);\n  Serial.println(\" cm\");\n\n  if (distanceCm < 10) {            // too close: solid tone + LED\n    digitalWrite(ledPin, HIGH);\n    tone(buzzerPin, 1000);\n  } else if (distanceCm < 30) {     // getting close: beep faster as you approach\n    digitalWrite(ledPin, HIGH);\n    tone(buzzerPin, 1000);\n    delay(distanceCm * 5);\n    noTone(buzzerPin);\n    delay(distanceCm * 5);\n  } else {                          // clear\n    digitalWrite(ledPin, LOW);\n    noTone(buzzerPin);\n  }\n\n  delay(50);\n}\n"
+  },
+  {
+    "id": "servo-sweep",
+    "title": "Servo Sweep Control",
+    "difficulty": "beginner",
+    "timeMinutes": 25,
+    "requires": [
+      "servo",
+      "breadboard",
+      "jumper-wires"
+    ],
+    "boards": [
+      "uno",
+      "nano",
+      "mega",
+      "esp32"
+    ],
+    "minDigitalPins": 1,
+    "minAnalogPins": 0,
+    "requiresFeatures": [],
+    "learn": [
+      "Servo library",
+      "PWM control",
+      "for loops"
+    ],
+    "tutorialUrl": "",
+    "intro": "Sweep a servo motor back and forth between 0 and 180 degrees. Introduces the Servo library and controlling angle with a loop.",
+    "wiring": [
+      "Servo signal (orange/yellow) → Pin 9",
+      "Servo VCC (red) → 5V",
+      "Servo GND (brown/black) → GND"
+    ],
+    "steps": [
+      "Connect the servo's signal wire to Pin 9, power to 5V, and ground to GND.",
+      "Upload the sketch; the horn sweeps smoothly back and forth.",
+      "If the servo is weak or jittery, power it from a separate 5V supply sharing a common ground."
+    ],
+    "code": "#include <Servo.h>\n\nServo myServo;\n\nvoid setup() {\n  myServo.attach(9);\n}\n\nvoid loop() {\n  for (int angle = 0; angle <= 180; angle++) {\n    myServo.write(angle);\n    delay(15);\n  }\n  for (int angle = 180; angle >= 0; angle--) {\n    myServo.write(angle);\n    delay(15);\n  }\n}\n"
+  },
+  {
+    "id": "temp-humidity-lcd",
+    "title": "Temperature & Humidity Display",
+    "difficulty": "intermediate",
+    "timeMinutes": 50,
+    "requires": [
+      "dht11",
+      "lcd-i2c",
+      "breadboard",
+      "jumper-wires"
+    ],
+    "boards": [
+      "uno",
+      "nano",
+      "mega",
+      "esp32"
+    ],
+    "minDigitalPins": 1,
+    "minAnalogPins": 0,
+    "requiresFeatures": [],
+    "learn": [
+      "DHT library",
+      "I2C communication",
+      "LCD output"
+    ],
+    "tutorialUrl": "",
+    "intro": "Read temperature and humidity from a DHT11 and show them on a 16x2 I2C LCD. Combines a sensor library with I2C display output.",
+    "wiring": [
+      "DHT11 VCC → 5V",
+      "DHT11 GND → GND",
+      "DHT11 DATA → Pin 2",
+      "LCD VCC → 5V",
+      "LCD GND → GND",
+      "LCD SDA → A4 (Uno/Nano) / GPIO21 (ESP32)",
+      "LCD SCL → A5 (Uno/Nano) / GPIO22 (ESP32)"
+    ],
+    "steps": [
+      "Install the 'DHT sensor library' and 'LiquidCrystal I2C' libraries in the Arduino IDE.",
+      "Wire the DHT11 data pin to Pin 2; wire the LCD's SDA/SCL to your board's I2C pins.",
+      "Upload the sketch. Temperature and humidity appear on the LCD, updating every 2 seconds.",
+      "If the LCD stays blank, its I2C address may be 0x3F instead of 0x27 – change it in the code."
+    ],
+    "code": "#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n#include <DHT.h>\n\n#define DHTPIN 2\n#define DHTTYPE DHT11\n\nDHT dht(DHTPIN, DHTTYPE);\nLiquidCrystal_I2C lcd(0x27, 16, 2); // try 0x3F if blank\n\nvoid setup() {\n  lcd.init();\n  lcd.backlight();\n  dht.begin();\n}\n\nvoid loop() {\n  float temp = dht.readTemperature();\n  float hum = dht.readHumidity();\n\n  lcd.setCursor(0, 0);\n  lcd.print(\"Temp: \");\n  lcd.print(temp);\n  lcd.print((char)223); // degree symbol\n  lcd.print(\"C\");\n\n  lcd.setCursor(0, 1);\n  lcd.print(\"Humidity: \");\n  lcd.print(hum);\n  lcd.print(\"%\");\n\n  delay(2000);\n}\n"
+  },
+  {
+    "id": "motion-activated-alarm",
+    "title": "Motion-Activated Alarm",
+    "difficulty": "intermediate",
+    "timeMinutes": 40,
+    "requires": [
+      "pir",
+      "buzzer",
+      "led",
+      "resistor",
+      "breadboard",
+      "jumper-wires"
+    ],
+    "boards": [
+      "uno",
+      "nano",
+      "mega",
+      "esp32"
+    ],
+    "minDigitalPins": 3,
+    "minAnalogPins": 0,
+    "requiresFeatures": [],
+    "learn": [
+      "PIR sensors",
+      "interrupts",
+      "state logic"
+    ],
+    "tutorialUrl": "",
+    "intro": "A PIR motion sensor triggers a buzzer and LED when it detects movement. Teaches digital sensor input and simple state handling.",
+    "wiring": [
+      "PIR VCC → 5V",
+      "PIR GND → GND",
+      "PIR OUT → Pin 2",
+      "Buzzer + → Pin 8",
+      "Buzzer − → GND",
+      "LED anode (long leg) → 220Ω resistor → Pin 7",
+      "LED cathode (short leg) → GND"
+    ],
+    "steps": [
+      "Wire the PIR's OUT pin to Pin 2, with VCC to 5V and GND to ground.",
+      "Wire the buzzer to Pin 8 and the LED (through a resistor) to Pin 7.",
+      "Upload the sketch and open the Serial Monitor (9600 baud).",
+      "Wave your hand: the buzzer and LED activate. Use the PIR's trim pots to adjust sensitivity and delay."
+    ],
+    "code": "const int pirPin = 2;\nconst int buzzerPin = 8;\nconst int ledPin = 7;\n\nvoid setup() {\n  pinMode(pirPin, INPUT);\n  pinMode(buzzerPin, OUTPUT);\n  pinMode(ledPin, OUTPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  if (digitalRead(pirPin) == HIGH) {\n    digitalWrite(ledPin, HIGH);\n    tone(buzzerPin, 1000);\n    Serial.println(\"Motion detected!\");\n  } else {\n    digitalWrite(ledPin, LOW);\n    noTone(buzzerPin);\n  }\n  delay(100);\n}\n"
+  },
+  {
+    "id": "reaction-time-game",
+    "title": "Reaction Time Game",
+    "difficulty": "intermediate",
+    "timeMinutes": 50,
+    "requires": [
+      "push-button",
+      "led",
+      "buzzer",
+      "resistor",
+      "breadboard",
+      "jumper-wires"
+    ],
+    "boards": [
+      "uno",
+      "nano",
+      "mega",
+      "esp32"
+    ],
+    "minDigitalPins": 3,
+    "minAnalogPins": 0,
+    "requiresFeatures": [],
+    "learn": [
+      "millis() timing",
+      "game state",
+      "randomness"
+    ],
+    "tutorialUrl": "",
+    "intro": "Test your reflexes: after a random delay the LED lights, and the game measures how fast you press the button. Teaches millis() timing and randomness.",
+    "wiring": [
+      "Push button leg A → Pin 2",
+      "Push button leg B → GND",
+      "LED anode (long leg) → 220Ω resistor → Pin 7",
+      "LED cathode (short leg) → GND",
+      "Buzzer + → Pin 8",
+      "Buzzer − → GND"
+    ],
+    "steps": [
+      "Wire the button to Pin 2/GND, the LED (via resistor) to Pin 7, and the buzzer to Pin 8.",
+      "Upload the sketch and open the Serial Monitor (9600 baud).",
+      "Wait for the LED to light, then press the button as fast as you can.",
+      "Your reaction time in milliseconds prints to the monitor after each round."
+    ],
+    "code": "const int buttonPin = 2;\nconst int ledPin = 7;\nconst int buzzerPin = 8;\n\nvoid setup() {\n  pinMode(buttonPin, INPUT_PULLUP);\n  pinMode(ledPin, OUTPUT);\n  pinMode(buzzerPin, OUTPUT);\n  Serial.begin(9600);\n  randomSeed(analogRead(A0));\n}\n\nvoid loop() {\n  digitalWrite(ledPin, LOW);\n  delay(random(2000, 5000)); // random wait\n\n  digitalWrite(ledPin, HIGH);\n  unsigned long startTime = millis();\n\n  while (digitalRead(buttonPin) == HIGH) {\n    // wait for the press\n  }\n  unsigned long reaction = millis() - startTime;\n\n  digitalWrite(ledPin, LOW);\n  tone(buzzerPin, 1000, 100);\n  Serial.print(\"Reaction time: \");\n  Serial.print(reaction);\n  Serial.println(\" ms\");\n  delay(2000);\n}\n"
+  },
+  {
+    "id": "distance-display",
+    "title": "Ultrasonic Distance Display",
+    "difficulty": "intermediate",
+    "timeMinutes": 45,
+    "requires": [
+      "hc-sr04",
+      "lcd-i2c",
+      "breadboard",
+      "jumper-wires"
+    ],
+    "boards": [
+      "uno",
+      "nano",
+      "mega",
+      "esp32"
+    ],
+    "minDigitalPins": 2,
+    "minAnalogPins": 0,
+    "requiresFeatures": [],
+    "learn": [
+      "sensor + display integration",
+      "I2C",
+      "formatting output"
+    ],
+    "tutorialUrl": "",
+    "intro": "Show live distance from an ultrasonic sensor on an I2C LCD. Combines pulse-timing measurement with formatted display output.",
+    "wiring": [
+      "HC-SR04 VCC → 5V",
+      "HC-SR04 GND → GND",
+      "HC-SR04 Trig → Pin 9",
+      "HC-SR04 Echo → Pin 10",
+      "LCD VCC → 5V",
+      "LCD GND → GND",
+      "LCD SDA → A4 (Uno/Nano) / GPIO21 (ESP32)",
+      "LCD SCL → A5 (Uno/Nano) / GPIO22 (ESP32)"
+    ],
+    "steps": [
+      "Install the 'LiquidCrystal I2C' library.",
+      "Wire the HC-SR04 (Trig to Pin 9, Echo to Pin 10) and the LCD to the I2C pins.",
+      "Upload the sketch; the measured distance updates on the LCD a few times per second.",
+      "If the LCD is blank, change the I2C address from 0x27 to 0x3F."
+    ],
+    "code": "#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n\nconst int trigPin = 9;\nconst int echoPin = 10;\nLiquidCrystal_I2C lcd(0x27, 16, 2);\n\nvoid setup() {\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n  lcd.init();\n  lcd.backlight();\n}\n\nvoid loop() {\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n\n  long duration = pulseIn(echoPin, HIGH);\n  float distanceCm = duration * 0.0343 / 2;\n\n  lcd.clear();\n  lcd.setCursor(0, 0);\n  lcd.print(\"Distance:\");\n  lcd.setCursor(0, 1);\n  lcd.print(distanceCm);\n  lcd.print(\" cm\");\n  delay(300);\n}\n"
+  },
+  {
+    "id": "smart-servo-door",
+    "title": "Motion-Triggered Servo Door",
+    "difficulty": "intermediate",
+    "timeMinutes": 55,
+    "requires": [
+      "pir",
+      "servo",
+      "breadboard",
+      "jumper-wires"
+    ],
+    "boards": [
+      "uno",
+      "nano",
+      "mega",
+      "esp32"
+    ],
+    "minDigitalPins": 2,
+    "minAnalogPins": 0,
+    "requiresFeatures": [],
+    "learn": [
+      "sensor-to-actuator logic",
+      "Servo library",
+      "timing"
+    ],
+    "tutorialUrl": "",
+    "intro": "A PIR sensor opens a servo-driven 'door' when it detects motion, then closes it after a few seconds. Teaches chaining a sensor input to an actuator output.",
+    "wiring": [
+      "PIR VCC → 5V",
+      "PIR GND → GND",
+      "PIR OUT → Pin 2",
+      "Servo signal (orange/yellow) → Pin 9",
+      "Servo VCC (red) → 5V",
+      "Servo GND (brown/black) → GND"
+    ],
+    "steps": [
+      "Wire the PIR's OUT pin to Pin 2; wire the servo's signal to Pin 9 with power and ground.",
+      "Upload the sketch. The servo starts at the closed position.",
+      "Trigger the PIR: the servo swings to open, holds for 3 seconds, then closes.",
+      "If the servo causes resets, power it from a separate 5V supply with a shared ground."
+    ],
+    "code": "#include <Servo.h>\n\nconst int pirPin = 2;\nServo doorServo;\n\nvoid setup() {\n  pinMode(pirPin, INPUT);\n  doorServo.attach(9);\n  doorServo.write(0); // closed position\n}\n\nvoid loop() {\n  if (digitalRead(pirPin) == HIGH) {\n    doorServo.write(90); // open\n    delay(3000);\n  } else {\n    doorServo.write(0);  // closed\n  }\n}\n"
+  },
+  {
+    "id": "wifi-weather-logger",
+    "title": "WiFi Weather Logger",
+    "difficulty": "advanced",
+    "timeMinutes": 90,
+    "requires": [
+      "dht11",
+      "breadboard",
+      "jumper-wires"
+    ],
+    "boards": [
+      "esp32"
+    ],
+    "minDigitalPins": 1,
+    "minAnalogPins": 0,
+    "requiresFeatures": [
+      "wifi"
+    ],
+    "learn": [
+      "WiFi connection",
+      "HTTP requests",
+      "cloud logging"
+    ],
+    "tutorialUrl": "",
+    "intro": "Read temperature and humidity on an ESP32 and send each reading to a web endpoint over WiFi. Teaches connecting to WiFi and making HTTP requests.",
+    "wiring": [
+      "DHT11 VCC → 3.3V",
+      "DHT11 GND → GND",
+      "DHT11 DATA → GPIO4"
+    ],
+    "steps": [
+      "Install the 'DHT sensor library' and select your ESP32 board in the Arduino IDE.",
+      "Fill in your WiFi name and password, and replace the endpoint URL with your own logging service (e.g. a Google Sheets webhook or your API).",
+      "Wire the DHT11 data pin to GPIO4.",
+      "Upload and open the Serial Monitor (115200 baud) to confirm it connects and posts a reading each minute."
+    ],
+    "code": "#include <WiFi.h>\n#include <HTTPClient.h>\n#include <DHT.h>\n\nconst char* ssid     = \"YOUR_WIFI_NAME\";\nconst char* password = \"YOUR_WIFI_PASSWORD\";\n\n#define DHTPIN 4\n#define DHTTYPE DHT11\nDHT dht(DHTPIN, DHTTYPE);\n\nvoid setup() {\n  Serial.begin(115200);\n  dht.begin();\n  WiFi.begin(ssid, password);\n  while (WiFi.status() != WL_CONNECTED) {\n    delay(500);\n    Serial.print(\".\");\n  }\n  Serial.println(\"\\nWiFi connected\");\n}\n\nvoid loop() {\n  float temp = dht.readTemperature();\n  float hum  = dht.readHumidity();\n  Serial.printf(\"Temp: %.1f C  Humidity: %.1f %%\\n\", temp, hum);\n\n  if (WiFi.status() == WL_CONNECTED) {\n    HTTPClient http;\n    http.begin(\"https://YOUR_ENDPOINT_HERE\"); // <-- replace\n    http.addHeader(\"Content-Type\", \"application/json\");\n    String body = \"{\\\"temp\\\":\" + String(temp) + \",\\\"humidity\\\":\" + String(hum) + \"}\";\n    int code = http.POST(body);\n    Serial.printf(\"POST status: %d\\n\", code);\n    http.end();\n  }\n  delay(60000); // log every minute\n}\n"
+  },
+  {
+    "id": "iot-led-control",
+    "title": "Web-Controlled LED",
+    "difficulty": "advanced",
+    "timeMinutes": 75,
+    "requires": [
+      "led",
+      "resistor",
+      "breadboard",
+      "jumper-wires"
+    ],
+    "boards": [
+      "esp32"
+    ],
+    "minDigitalPins": 1,
+    "minAnalogPins": 0,
+    "requiresFeatures": [
+      "wifi"
+    ],
+    "learn": [
+      "web server",
+      "HTTP routing",
+      "remote GPIO control"
+    ],
+    "tutorialUrl": "",
+    "intro": "Host a tiny web page on the ESP32 to switch an LED on and off from your phone or laptop. Teaches running a web server and routing HTTP requests to GPIO.",
+    "wiring": [
+      "LED anode (long leg) → 220Ω resistor → GPIO2",
+      "LED cathode (short leg) → GND"
+    ],
+    "steps": [
+      "Select your ESP32 board in the Arduino IDE and fill in your WiFi name and password.",
+      "Wire the LED's long leg through a resistor to GPIO2, short leg to GND.",
+      "Upload and open the Serial Monitor (115200 baud) to read the ESP32's IP address.",
+      "Open that IP in a browser on the same network and use the ON/OFF links to control the LED."
+    ],
+    "code": "#include <WiFi.h>\n#include <WebServer.h>\n\nconst char* ssid     = \"YOUR_WIFI_NAME\";\nconst char* password = \"YOUR_WIFI_PASSWORD\";\n\nconst int ledPin = 2;\nWebServer server(80);\n\nvoid handleRoot() {\n  String html = \"<h1>ESP32 LED Control</h1>\"\n                \"<p><a href=\\\"/on\\\">Turn ON</a></p>\"\n                \"<p><a href=\\\"/off\\\">Turn OFF</a></p>\";\n  server.send(200, \"text/html\", html);\n}\n\nvoid handleOn() {\n  digitalWrite(ledPin, HIGH);\n  server.send(200, \"text/html\", \"LED is ON. <a href=\\\"/\\\">Back</a>\");\n}\n\nvoid handleOff() {\n  digitalWrite(ledPin, LOW);\n  server.send(200, \"text/html\", \"LED is OFF. <a href=\\\"/\\\">Back</a>\");\n}\n\nvoid setup() {\n  Serial.begin(115200);\n  pinMode(ledPin, OUTPUT);\n\n  WiFi.begin(ssid, password);\n  while (WiFi.status() != WL_CONNECTED) {\n    delay(500);\n    Serial.print(\".\");\n  }\n  Serial.println();\n  Serial.print(\"Open http://\");\n  Serial.println(WiFi.localIP());\n\n  server.on(\"/\", handleRoot);\n  server.on(\"/on\", handleOn);\n  server.on(\"/off\", handleOff);\n  server.begin();\n}\n\nvoid loop() {\n  server.handleClient();\n}\n"
+  }
+]

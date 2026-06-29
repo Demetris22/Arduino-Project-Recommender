@@ -1,0 +1,86 @@
+[
+  {
+    "id": "led",
+    "name": "LED",
+    "category": "actuator",
+    "interface": "digital"
+  },
+  {
+    "id": "rgb-led",
+    "name": "RGB LED",
+    "category": "actuator",
+    "interface": "pwm"
+  },
+  {
+    "id": "resistor",
+    "name": "Resistor",
+    "category": "passive",
+    "interface": "none"
+  },
+  {
+    "id": "breadboard",
+    "name": "Breadboard",
+    "category": "infrastructure",
+    "interface": "none"
+  },
+  {
+    "id": "jumper-wires",
+    "name": "Jumper Wires",
+    "category": "infrastructure",
+    "interface": "none"
+  },
+  {
+    "id": "push-button",
+    "name": "Push Button",
+    "category": "input",
+    "interface": "digital"
+  },
+  {
+    "id": "potentiometer",
+    "name": "Potentiometer",
+    "category": "input",
+    "interface": "analog"
+  },
+  {
+    "id": "photoresistor",
+    "name": "Photoresistor (LDR)",
+    "category": "sensor",
+    "interface": "analog"
+  },
+  {
+    "id": "dht11",
+    "name": "DHT11 Temp/Humidity Sensor",
+    "category": "sensor",
+    "interface": "digital"
+  },
+  {
+    "id": "hc-sr04",
+    "name": "HC-SR04 Ultrasonic Sensor",
+    "category": "sensor",
+    "interface": "digital"
+  },
+  {
+    "id": "pir",
+    "name": "PIR Motion Sensor",
+    "category": "sensor",
+    "interface": "digital"
+  },
+  {
+    "id": "servo",
+    "name": "SG90 Servo Motor",
+    "category": "actuator",
+    "interface": "pwm"
+  },
+  {
+    "id": "buzzer",
+    "name": "Piezo Buzzer",
+    "category": "actuator",
+    "interface": "digital"
+  },
+  {
+    "id": "lcd-i2c",
+    "name": "16x2 LCD (I2C)",
+    "category": "display",
+    "interface": "i2c"
+  }
+]

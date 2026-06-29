@@ -152,6 +152,14 @@ body {
   );
 }
 
+/* While a modal is open, freeze the background animations. The modal's
+   backdrop-filter then samples a static image (cached), so scrolling the
+   dialog gets the full frame budget instead of fighting a per-frame reblur. */
+body.modal-open .atmosphere__base,
+body.modal-open .atmosphere__aurora {
+  animation-play-state: paused;
+}
+
 @keyframes atmo-drift {
   from { transform: translate3d(0, 0, 0) scale(1); }
   to { transform: translate3d(-2%, 1.5%, 0) scale(1.06); }
@@ -1440,7 +1448,10 @@ button {
   justify-content: center;
   padding: clamp(0.75rem, 4vw, 3rem) 1rem;
   overflow-y: auto;
+  /* keep scroll contained to this layer — don't chain to the locked page */
+  overscroll-behavior: contain;
   background: rgba(3, 5, 9, 0.72);
+  -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
   animation: backdrop-in 0.2s ease both;
 }
@@ -1464,6 +1475,8 @@ button {
   box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.7),
     0 0 0 1px rgba(45, 212, 191, 0.08);
   animation: modal-in 0.26s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  /* own compositor layer so scrolling the body / sticky header stays cheap */
+  will-change: transform;
 }
 
 @keyframes modal-in {
@@ -1540,6 +1553,13 @@ button {
 .detail__body {
   padding: 1.5rem 1.5rem 1.75rem;
   overflow-y: auto;
+  /* contain the scroll so it never chains to the backdrop/page (kills jitter) */
+  overscroll-behavior: contain;
+  /* keep scroll repaints isolated to this box + momentum on touch, so the
+     scroll responds immediately instead of repainting the whole dialog */
+  contain: paint;
+  -webkit-overflow-scrolling: touch;
+  will-change: scroll-position;
   /* flex child must be allowed to shrink for internal scroll to engage */
   flex: 1;
   min-height: 0;

@@ -67,10 +67,16 @@ function Modal({ titleId, onClose, children }) {
       document.body.style.paddingRight = `${currentPadding + scrollbarWidth}px`;
     }
 
+    // Freeze the animated background while open (see index.css) so the
+    // backdrop blur stops re-rasterizing every frame and the dialog scrolls
+    // smoothly.
+    document.body.classList.add('modal-open');
+
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = prevOverflow;
       document.body.style.paddingRight = prevPaddingRight;
+      document.body.classList.remove('modal-open');
       // Return focus to whatever opened the dialog (the card).
       previouslyFocused.current?.focus?.();
     };

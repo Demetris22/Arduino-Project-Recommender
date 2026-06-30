@@ -58,6 +58,9 @@ function ResultsControls({
           type="text"
           className="rc-search__input"
           placeholder="Search projects or topics…"
+          aria-label="Search projects"
+          autoComplete="off"
+          spellCheck={false}
           value={search}
           tabIndex={searchOpen ? 0 : -1}
           aria-hidden={!searchOpen}

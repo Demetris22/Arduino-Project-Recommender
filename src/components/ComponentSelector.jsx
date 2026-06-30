@@ -46,7 +46,11 @@ function ComponentSelector({
   const grouped = groupByCategory(components);
 
   return (
-    <section className="panel" aria-labelledby="component-selector-heading">
+    <section
+      className="panel"
+      aria-labelledby={showTitle ? 'component-selector-heading' : undefined}
+      aria-label={showTitle ? undefined : 'Choose your components'}
+    >
       <div className="panel__head">
         {showTitle ? (
           <div>

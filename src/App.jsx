@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 
 import boards from './data/boards.json';
 import components from './data/components.json';
@@ -19,6 +20,21 @@ import StepIndicator from './components/StepIndicator.jsx';
 
 const data = { boards, components, projects };
 const DEFAULT_BOARD_ID = boards[0].id;
+
+// A ready-made selection for the "Try an example" shortcut — a common starter
+// kit that yields a satisfying mix of buildable, near-miss, and a buy-next pick.
+const EXAMPLE_SELECTION = {
+  board: 'uno',
+  parts: [
+    'led',
+    'resistor',
+    'breadboard',
+    'jumper-wires',
+    'push-button',
+    'buzzer',
+    'potentiometer',
+  ],
+};
 
 // Decide the starting selection + stage from the URL.
 // - Fresh visit (no params): start at Step 1 with NO board chosen.
@@ -162,15 +178,41 @@ function App() {
 
   const editStep = (step) => setEditing((cur) => (cur === step ? null : step));
 
+  // Jump straight to results with a sensible starter selection.
+  const loadExample = () => {
+    setSelectedBoardId(EXAMPLE_SELECTION.board);
+    setOwnedComponentIds(EXAMPLE_SELECTION.parts);
+    setStage('results');
+  };
+
+  // Reduced-motion-aware variants for animating between guided-flow stages.
+  const reduceMotion = useReducedMotion();
+  const stageMotion = reduceMotion
+    ? {}
+    : {
+        initial: { opacity: 0, y: 12 },
+        animate: { opacity: 1, y: 0 },
+        exit: { opacity: 0, y: -8 },
+        transition: { duration: 0.28, ease: [0.22, 0.61, 0.36, 1] },
+      };
+
   return (
     <div className="app" data-stage={stage}>
+      <a className="skip-link" href="#main">Skip to content</a>
       <Atmosphere />
 
       <header className="hero">
-        <p className="hero__eyebrow">
+        <div className="hero__brand">
+          <img
+            className="hero__logo"
+            src="/favicon.svg"
+            alt=""
+            width="36"
+            height="36"
+          />
+          <span className="hero__brandname">Sketchef</span>
           <span className="hero__led" aria-hidden="true" />
-          Sketchef
-        </p>
+        </div>
         <h1 className="hero__title">
           What can you build <span className="hero__accent">right now?</span>
         </h1>
@@ -198,10 +240,11 @@ function App() {
         )}
       </header>
 
-      <main className="flow">
+      <main className="flow" id="main">
+        <AnimatePresence mode="wait" initial={false}>
         {/* ---------- Stage 1: choose your board ---------- */}
         {stage === 'board' && (
-          <section className="stage" key="stage-board">
+          <motion.section className="stage" {...stageMotion} key="stage-board">
             <StepIndicator current={1} />
             <div className="step-head">
               <p className="step-head__eyebrow">Step 1 of 3 · Choose your Arduino</p>
@@ -216,12 +259,19 @@ function App() {
               onSelect={chooseBoardAndAdvance}
               showTitle={false}
             />
-          </section>
+
+            <p className="stage__example">
+              Just exploring?{' '}
+              <button type="button" className="link-btn" onClick={loadExample}>
+                Try an example →
+              </button>
+            </p>
+          </motion.section>
         )}
 
         {/* ---------- Stage 2: pick your parts ---------- */}
         {stage === 'parts' && (
-          <section className="stage" key="stage-parts">
+          <motion.section className="stage" {...stageMotion} key="stage-parts">
             <StepIndicator current={2} />
 
             <button
@@ -262,12 +312,12 @@ function App() {
                 Show what I can build →
               </button>
             </div>
-          </section>
+          </motion.section>
         )}
 
         {/* ---------- Stage 3: results ---------- */}
         {stage === 'results' && (
-          <section className="stage" key="stage-results">
+          <motion.section className="stage" {...stageMotion} key="stage-results">
             <div className="summary-bar">
               <button
                 type="button"
@@ -426,8 +476,9 @@ function App() {
                 </>
               )}
             </div>
-          </section>
+          </motion.section>
         )}
+        </AnimatePresence>
       </main>
 
       <footer className="footer">

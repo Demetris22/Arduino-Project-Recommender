@@ -32,7 +32,12 @@ function ShareButton() {
   };
 
   return (
-    <button type="button" className="share-btn" onClick={share}>
+    <button
+      type="button"
+      className="share-btn"
+      onClick={share}
+      aria-live="polite"
+    >
       <span aria-hidden="true">🔗</span>
       {copied ? 'Link copied!' : 'Share build'}
     </button>

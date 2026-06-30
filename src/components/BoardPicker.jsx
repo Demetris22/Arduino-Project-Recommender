@@ -3,7 +3,11 @@
 
 function BoardPicker({ boards, selectedBoardId, onSelect, showTitle = true }) {
   return (
-    <section className="panel" aria-labelledby="board-picker-heading">
+    <section
+      className="panel"
+      aria-labelledby={showTitle ? 'board-picker-heading' : undefined}
+      aria-label={showTitle ? undefined : 'Choose your board'}
+    >
       {showTitle && (
         <div className="panel__head">
           <h2 id="board-picker-heading" className="panel__title">

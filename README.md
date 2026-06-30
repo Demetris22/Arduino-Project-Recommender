@@ -9,10 +9,11 @@ catalog of projects into **buildable now**, **one or two parts away**, and
 **not compatible with your board** — with full wiring, step-by-step
 instructions, and the Arduino sketch for each one.
 
-> **Live demo:** _add your Vercel URL here_
+### [▶ Live demo](https://sketchef.vercel.app)
 
-<!-- Add a screenshot or short GIF of the guided flow + results here, e.g.:
-![Arduino Project Recommender](docs/screenshot.png) -->
+<!-- Hero image uses the social cover; swap in a real app screenshot/GIF of the
+     board → parts → results flow any time for an even better first impression. -->
+![Sketchef — find Arduino projects you can build right now](public/og-image.png)
 
 ## Highlights
 

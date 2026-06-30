@@ -1,8 +1,8 @@
-# Arduino Project Recommender
+# Sketchef
 
-A static web app that tells you **what you can actually build** with the Arduino
-board and components you already own — and which part to buy next to unlock the
-most projects.
+**Sketchef** is a static web app that tells you **what you can actually build**
+with the Arduino board and components you already own — and which part to buy
+next to unlock the most projects.
 
 Pick your board, check off the parts in your kit, and the app instantly sorts a
 catalog of projects into **buildable now**, **one or two parts away**, and

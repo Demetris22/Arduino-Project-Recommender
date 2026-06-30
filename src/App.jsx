@@ -169,7 +169,7 @@ function App() {
       <header className="hero">
         <p className="hero__eyebrow">
           <span className="hero__led" aria-hidden="true" />
-          Arduino Project Recommender
+          Sketchef
         </p>
         <h1 className="hero__title">
           What can you build <span className="hero__accent">right now?</span>

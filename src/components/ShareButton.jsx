@@ -2,6 +2,7 @@
 // with a brief "Copied!" confirmation. On devices with the Web Share API
 // and no clipboard access, it falls back to the native share sheet.
 import { useState } from 'react';
+import Icon from './Icon.jsx';
 
 function ShareButton() {
   const [copied, setCopied] = useState(false);
@@ -38,7 +39,7 @@ function ShareButton() {
       onClick={share}
       aria-live="polite"
     >
-      <span aria-hidden="true">🔗</span>
+      <Icon name="share" />
       {copied ? 'Link copied!' : 'Share build'}
     </button>
   );

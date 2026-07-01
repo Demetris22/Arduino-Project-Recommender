@@ -2,6 +2,7 @@
 // suggestNextPurchases — clicking a recommendation adds that component to the
 // user's owned set (via onAdd), which makes the results recompute live.
 import { useState } from 'react';
+import Icon from './Icon.jsx';
 
 const plural = (n) => (n === 1 ? 'project' : 'projects');
 
@@ -26,7 +27,7 @@ function NextPurchase({ recommendations, onAdd, onDismiss }) {
     <section className="next-buy" aria-labelledby="next-buy-heading">
       <div className="next-buy__top">
         <p className="next-buy__eyebrow" id="next-buy-heading">
-          <span aria-hidden="true">⚡</span> Best next purchase
+          <Icon name="bolt" /> Best next purchase
         </p>
         {onDismiss && (
           <button
@@ -57,7 +58,7 @@ function NextPurchase({ recommendations, onAdd, onDismiss }) {
             </>
           ) : (
             <>
-              — needed for{' '}
+              for{' '}
               <strong className="next-buy__num">{top.neededByCount}</strong>{' '}
               {plural(top.neededByCount)} you're working toward
             </>

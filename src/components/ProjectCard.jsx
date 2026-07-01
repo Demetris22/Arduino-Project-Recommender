@@ -3,6 +3,7 @@
 // When `onOpen` is provided the whole card becomes a clickable button that
 // opens the build-instructions detail view (buildable + near-miss only).
 import { formatTime } from '../lib/format.js';
+import Icon from './Icon.jsx';
 
 function ProjectCard({ project, missing, reasons, variant, index = 0, onOpen }) {
   const clickable = typeof onOpen === 'function';
@@ -43,9 +44,7 @@ function ProjectCard({ project, missing, reasons, variant, index = 0, onOpen }) 
       </header>
 
       <p className="project-card__time">
-        <span className="project-card__time-icon" aria-hidden="true">
-          ⏱
-        </span>
+        <Icon name="timer" className="project-card__time-icon" />
         <span className="mono">{formatTime(project.timeMinutes)}</span>
       </p>
 

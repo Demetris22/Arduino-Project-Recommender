@@ -2,6 +2,7 @@
 // difficulty filters tucked behind a "Filter" control. Holds only local
 // open/close UI state; the actual search/filter state lives in App.
 import { useEffect, useRef, useState } from 'react';
+import Icon from './Icon.jsx';
 
 const DIFFICULTIES = ['beginner', 'intermediate', 'advanced'];
 
@@ -51,7 +52,7 @@ function ResultsControls({
           aria-expanded={searchOpen}
           onClick={() => setSearchOpen((v) => !v)}
         >
-          <span aria-hidden="true">⌕</span>
+          <Icon name="search" size="1.1em" />
         </button>
         <input
           ref={inputRef}
@@ -92,7 +93,7 @@ function ResultsControls({
           aria-haspopup="true"
           onClick={() => setFilterOpen((v) => !v)}
         >
-          <span aria-hidden="true">⚑</span> Filter
+          <Icon name="filter" /> Filter
           {activeCount > 0 && (
             <span className="rc-filter__badge mono">{activeCount}</span>
           )}

@@ -58,7 +58,7 @@ function ComponentSelector({
               2 · Parts you own
             </h2>
             <p className="panel__hint">
-              Toggle everything in your kit — {owned.size} selected.
+              Toggle everything in your kit ({owned.size} selected).
             </p>
           </div>
         ) : (

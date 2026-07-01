@@ -17,6 +17,7 @@ import ShareButton from './components/ShareButton.jsx';
 import Atmosphere from './components/Atmosphere.jsx';
 import NextPurchase from './components/NextPurchase.jsx';
 import StepIndicator from './components/StepIndicator.jsx';
+import Icon from './components/Icon.jsx';
 
 const data = { boards, components, projects };
 const DEFAULT_BOARD_ID = boards[0].id;
@@ -218,8 +219,8 @@ function App() {
         </h1>
         {stage !== 'results' && (
           <p className="hero__lede">
-            Tell it your board and parts — get projects you can actually build.
-            One step at a time.
+            Tell it your board and the parts you own. Get projects you can
+            actually build, one step at a time.
           </p>
         )}
         {stage === 'results' && (
@@ -247,7 +248,7 @@ function App() {
           <motion.section className="stage" {...stageMotion} key="stage-board">
             <StepIndicator current={1} />
             <div className="step-head">
-              <p className="step-head__eyebrow">Step 1 of 3 · Choose your Arduino</p>
+              <p className="step-head__eyebrow">Choose your Arduino</p>
               <h2 className="step-head__title">Which board are you using?</h2>
               <p className="step-head__help">
                 Pick the board you're building with.
@@ -285,9 +286,7 @@ function App() {
             </button>
 
             <div className="step-head">
-              <p className="step-head__eyebrow">
-                Step 2 of 3 · Choose your components
-              </p>
+              <p className="step-head__eyebrow">Choose your components</p>
               <h2 className="step-head__title">Which parts do you own?</h2>
               <p className="step-head__help">
                 Toggle the parts you have in your kit.
@@ -378,12 +377,12 @@ function App() {
             <div className="results">
               <div className="results__bar">
                 <div className="step-head step-head--inline">
-                  <p className="step-head__eyebrow">Step 3 of 3 · What you can build</p>
+                  <p className="step-head__eyebrow">What you can build</p>
                   <h2 className="step-head__title results__heading">
                     Your projects
                   </h2>
                   <p className="step-head__help">
-                    Tap a project for wiring, steps and code — or refine with
+                    Tap a project for wiring, steps and code, or refine with
                     search and filters.
                   </p>
                 </div>
@@ -409,7 +408,7 @@ function App() {
                     className="buy-trigger"
                     onClick={() => setShowNextBuy(true)}
                   >
-                    <span aria-hidden="true">💡</span> What should I buy next?
+                    <Icon name="bulb" /> What should I buy next?
                   </button>
                 ))}
 
@@ -441,7 +440,7 @@ function App() {
                     emptyText={
                       filtersActive
                         ? 'No buildable projects match your filters.'
-                        : "Nothing fully buildable yet — check the near-misses below, you're probably close."
+                        : "Nothing fully buildable yet. Check the near-misses below, you're probably close."
                     }
                     onOpen={setActiveProject}
                   />
@@ -455,7 +454,7 @@ function App() {
                     emptyText={
                       filtersActive
                         ? 'No near-misses match your filters.'
-                        : 'No near-misses right now — add more parts to unlock these.'
+                        : 'No near-misses right now. Add more parts to unlock these.'
                     }
                     onOpen={setActiveProject}
                   />
@@ -482,9 +481,29 @@ function App() {
       </main>
 
       <footer className="footer">
-        <p>
-          Static client-side app · {boards.length} boards · {components.length}{' '}
-          components · {projects.length} projects
+        <p className="footer__by">
+          Built by{' '}
+          <a
+            className="footer__link"
+            href="https://github.com/Demetris22"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            Demetris Demetriou
+          </a>{' '}
+          ·{' '}
+          <a
+            className="footer__link"
+            href="https://github.com/Demetris22/Arduino-Project-Recommender"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            View source
+          </a>
+        </p>
+        <p className="footer__meta">
+          {projects.length} projects across {boards.length} boards and{' '}
+          {components.length} components. Runs entirely in your browser.
         </p>
       </footer>
 

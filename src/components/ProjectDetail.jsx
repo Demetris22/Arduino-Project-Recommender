@@ -3,6 +3,7 @@
 // "coming soon" state while still showing what IS available.
 import { useMemo, useState } from 'react';
 import Modal from './Modal.jsx';
+import Icon from './Icon.jsx';
 import { formatTime } from '../lib/format.js';
 
 // Split a wiring line on the arrow into [part, connection].
@@ -58,7 +59,7 @@ function ProjectDetail({ project, components, onClose }) {
               {project.difficulty}
             </span>
             <span className="detail__time">
-              <span aria-hidden="true">⏱</span>{' '}
+              <Icon name="timer" />{' '}
               <span className="mono">{formatTime(project.timeMinutes)}</span>
             </span>
           </div>

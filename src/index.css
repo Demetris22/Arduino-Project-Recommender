@@ -56,10 +56,15 @@
   --space: 1rem;
 
   /* ---- type ---- */
-  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica,
-    Arial, sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Fira Code',
-    'Cascadia Code', 'Roboto Mono', Consolas, 'Liberation Mono', monospace;
+  /* Three voices: a characterful grotesque for display (Bricolage), a technical
+     mono for anything instrument-like (Spline Sans Mono), neutral system body.
+     Chosen for this app specifically — not the usual default reach. */
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+  --font-display: 'Bricolage Grotesque Variable', 'Bricolage Grotesque',
+    var(--font-sans);
+  --font-mono: 'Spline Sans Mono Variable', 'Spline Sans Mono', ui-monospace,
+    'Cascadia Code', Consolas, 'Liberation Mono', monospace;
 
   --maxw: 1200px;
 
@@ -180,6 +185,13 @@ body.modal-open .atmosphere__aurora {
 button {
   font-family: inherit;
   cursor: pointer;
+  touch-action: manipulation;
+}
+
+/* inline line-icons (Icon.jsx) — never shrink, sit on the text baseline */
+.icon {
+  flex: none;
+  vertical-align: -0.14em;
 }
 
 /* skip-to-content link: off-screen until focused */
@@ -268,9 +280,10 @@ button {
 }
 
 .hero__brandname {
-  font-size: 1.18rem;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.005em;
   color: var(--text);
 }
 
@@ -290,10 +303,12 @@ button {
 
 .hero__title {
   margin: 0 0 0.7rem;
-  font-size: clamp(2rem, 5.2vw, 3.25rem);
-  font-weight: 750;
-  letter-spacing: -0.025em;
-  line-height: 1.05;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5.2vw, 3.35rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.03;
+  text-wrap: balance;
 }
 
 .hero__accent {
@@ -306,6 +321,21 @@ button {
   max-width: 58ch;
   color: var(--text-dim);
   font-size: clamp(0.98rem, 1.6vw, 1.12rem);
+}
+
+/* One orchestrated moment: the hero rises in a short staggered cascade on first
+   paint. Deliberately the only load animation up here — everything below reacts
+   to the user, not the clock. Skipped entirely under reduced-motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero__brand { animation: hero-rise 0.62s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+  .hero__title { animation: hero-rise 0.62s cubic-bezier(0.22, 0.61, 0.36, 1) 0.09s both; }
+  .hero__lede,
+  .hero__stats { animation: hero-rise 0.62s cubic-bezier(0.22, 0.61, 0.36, 1) 0.18s both; }
+}
+
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: none; }
 }
 
 .hero__footer {
@@ -744,8 +774,10 @@ button {
 
 .prompt-card__title {
   margin: 0 0 0.6rem;
+  font-family: var(--font-display);
   font-size: 1.3rem;
-  letter-spacing: -0.01em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 .prompt-card__body {
@@ -1001,9 +1033,10 @@ button {
   align-items: center;
   gap: 0.65rem;
   margin: 0;
-  font-size: 1.12rem;
-  font-weight: 680;
-  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+  font-size: 1.14rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
 }
 
 .results-section__count {
@@ -1557,10 +1590,12 @@ button {
 
 .detail__title {
   margin: 0 0 0.6rem;
+  font-family: var(--font-display);
   font-size: clamp(1.2rem, 3vw, 1.55rem);
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   line-height: 1.2;
+  text-wrap: balance;
 }
 
 .detail__meta {
@@ -1959,10 +1994,12 @@ button {
 
 .step-head__title {
   margin: 0;
+  font-family: var(--font-display);
   font-size: clamp(1.3rem, 3vw, 1.85rem);
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   line-height: 1.15;
+  text-wrap: balance;
 }
 
 .step-head__help {
@@ -2158,9 +2195,10 @@ button {
 
 .results__heading {
   margin: 0;
+  font-family: var(--font-display);
   font-size: 1.15rem;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 /* ---- "what should I buy next?" trigger ---- */
@@ -2414,17 +2452,43 @@ button {
 /* ============ footer ============ */
 
 .footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
   margin-top: 2.75rem;
   padding-top: 1.3rem;
   border-top: 1px solid var(--border);
   text-align: center;
-  color: var(--text-faint);
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
 }
 
 .footer p {
   margin: 0;
+}
+
+.footer__by {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+}
+
+.footer__meta {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-faint);
+}
+
+.footer__link {
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-line);
+  padding-bottom: 1px;
+  transition: color 0.16s, border-color 0.16s, text-shadow 0.16s;
+}
+
+.footer__link:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  text-shadow: 0 0 12px var(--glow);
 }
 
 /* ============ motion safety ============ */

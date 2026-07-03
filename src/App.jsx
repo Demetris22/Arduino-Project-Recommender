@@ -23,6 +23,8 @@ import StepIndicator from './components/StepIndicator.jsx';
 import Icon from './components/Icon.jsx';
 import HeroSchematic from './components/HeroSchematic.jsx';
 import TextType from './components/TextType.jsx';
+import LandingPage from './components/LandingPage.jsx';
+import CountUp from './components/CountUp.jsx';
 
 const data = { boards, components, projects };
 const DEFAULT_BOARD_ID = boards[0].id;
@@ -52,7 +54,7 @@ function readInitial() {
   const hasParts = params.has('parts');
 
   if (!hasBoard && !hasParts) {
-    return { boardId: null, parts: [], stage: 'board' };
+    return { boardId: null, parts: [], stage: 'landing' };
   }
 
   const sel = readSelectionFromUrl(window.location.search, {
@@ -272,6 +274,7 @@ function App() {
       <a className="skip-link" href="#main">Skip to content</a>
       <Atmosphere />
 
+      {stage !== 'landing' && (
       <header className="hero">
         <div className="hero__main">
         <div className="hero__brand">
@@ -337,9 +340,25 @@ function App() {
         </div>
         <HeroSchematic />
       </header>
+      )}
 
       <main className="flow" id="main">
         <AnimatePresence mode="wait" initial={false}>
+        {/* ---------- Stage 0: landing / cover sheet ---------- */}
+        {stage === 'landing' && (
+          <motion.section
+            className="landing-stage"
+            {...stageMotion}
+            key="stage-landing"
+          >
+            <LandingPage
+              reduceMotion={reduceMotion}
+              onStart={() => setStage('board')}
+              onExample={loadExample}
+            />
+          </motion.section>
+        )}
+
         {/* ---------- Stage 1: choose your board ---------- */}
         {stage === 'board' && (
           <motion.section className="stage" {...stageMotion} key="stage-board">
@@ -620,15 +639,29 @@ function App() {
         <dl className="titleblock__grid">
           <div className="titleblock__cell">
             <dt>Boards</dt>
-            <dd className="mono">{boards.length}</dd>
+            <dd className="mono">
+              {reduceMotion ? boards.length : <CountUp to={boards.length} duration={1.1} />}
+            </dd>
           </div>
           <div className="titleblock__cell">
             <dt>Components</dt>
-            <dd className="mono">{components.length}</dd>
+            <dd className="mono">
+              {reduceMotion ? (
+                components.length
+              ) : (
+                <CountUp to={components.length} duration={1.3} delay={0.12} />
+              )}
+            </dd>
           </div>
           <div className="titleblock__cell">
             <dt>Projects</dt>
-            <dd className="mono">{projects.length}</dd>
+            <dd className="mono">
+              {reduceMotion ? (
+                projects.length
+              ) : (
+                <CountUp to={projects.length} duration={1.5} delay={0.24} />
+              )}
+            </dd>
           </div>
           <div className="titleblock__cell">
             <dt>Scale</dt>

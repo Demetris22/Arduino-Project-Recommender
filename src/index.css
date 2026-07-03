@@ -72,7 +72,7 @@
   --font-mono: 'Spline Sans Mono Variable', 'Spline Sans Mono', ui-monospace,
     'Cascadia Code', Consolas, 'Liberation Mono', monospace;
 
-  --maxw: 1200px;
+  --maxw: 1600px;
 
   color-scheme: light;
 }
@@ -3646,4 +3646,529 @@ button {
 .nm-row__main:hover .nm-row__cta {
   transform: translateX(3px);
   color: var(--blue-deep);
+}
+
+/* ============ landing "cover sheet" ============ */
+
+.landing-stage {
+  min-width: 0;
+}
+
+.cover {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.6rem, 4vw, 2.9rem);
+}
+
+/* masthead: brand left, drawing reference right, ruled off */
+.cover__masthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--line-strong);
+  box-shadow: 0 3px 0 -2px var(--line);
+}
+
+.cover__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.cover__logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+}
+
+.cover__brandname {
+  font-family: var(--font-display);
+  font-size: 1.16rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.cover__docref {
+  font-size: 0.63rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* hero: pitch + CTA on the left, the key drawing on the right */
+.cover__hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: center;
+}
+
+.cover__copy {
+  position: relative;
+  min-width: 0;
+}
+
+.cover__eyebrow {
+  margin: 0 0 0.85rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
+
+.cover__title {
+  margin: 0 0 1.1rem;
+  font-family: var(--font-display);
+  font-stretch: 115%;
+  font-size: clamp(2.2rem, 5.4vw, 3.9rem);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.02;
+  color: var(--ink);
+}
+
+.cover__title-lead {
+  display: block;
+}
+
+.cover__type {
+  color: var(--blue);
+}
+
+/* the cycling value word sits in a slot sized to the longest phrase, so the
+   title's height is fixed and words swapping in never push the page (no jitter) */
+.cover__type-slot {
+  position: relative;
+  display: block;
+}
+.cover__type-sizer {
+  visibility: hidden;
+}
+.cover__type-anim {
+  position: absolute;
+  inset: 0;
+}
+
+.cover__type-cursor {
+  color: var(--blue);
+  font-weight: 400;
+}
+
+.cover__sub {
+  margin: 0 0 1.6rem;
+  max-width: 52ch;
+  font-size: clamp(1rem, 1.5vw, 1.14rem);
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.cover__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.cover__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--on-blue);
+  background: var(--blue);
+  border: 1px solid var(--blue-deep);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1.6rem;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.16s ease, background 0.2s, box-shadow 0.2s;
+}
+
+.cover__cta span {
+  transition: transform 0.16s ease;
+}
+
+.cover__cta:hover {
+  transform: translateY(-2px);
+  background: var(--blue-deep);
+  box-shadow: var(--shadow-sheet);
+}
+
+.cover__cta:hover span {
+  transform: translateX(3px);
+}
+
+.cover__cta:active {
+  transform: translateY(0);
+}
+
+.cover__cta:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+
+.cover__ghost {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+  background: none;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 0.8rem 1.1rem;
+  transition: color 0.16s, border-color 0.16s, background 0.16s;
+}
+
+.cover__ghost:hover {
+  color: var(--blue);
+  border-color: var(--blue);
+  background: var(--blue-soft);
+}
+
+.cover__ghost:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.cover__meta {
+  margin: 1.15rem 0 0;
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* the key drawing, framed as a plate with corner registration ticks */
+.cover__figure {
+  min-width: 0;
+}
+
+.cover__frame {
+  position: relative;
+  padding: clamp(1rem, 2.5vw, 1.8rem);
+  background:
+    radial-gradient(120% 120% at 80% 0%, var(--blue-soft), transparent 55%),
+    var(--surface-raised);
+  border: 1px solid var(--blue-line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sheet);
+}
+
+.cover__frame .cover-schem__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: var(--ink-2);
+}
+
+.cover__figcaption {
+  display: block;
+  min-height: 1.5rem;
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--line);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.cover__tick {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 0 solid var(--blue);
+  opacity: 0.7;
+  pointer-events: none;
+}
+.cover__tick--tl { top: -1px; left: -1px; border-top-width: 1.5px; border-left-width: 1.5px; }
+.cover__tick--tr { top: -1px; right: -1px; border-top-width: 1.5px; border-right-width: 1.5px; }
+.cover__tick--bl { bottom: -1px; left: -1px; border-bottom-width: 1.5px; border-left-width: 1.5px; }
+.cover__tick--br { bottom: -1px; right: -1px; border-bottom-width: 1.5px; border-right-width: 1.5px; }
+
+/* how it works — a drafting register of three steps */
+.cover__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.7rem;
+}
+
+.cover__step-item {
+  display: flex;
+}
+
+/* each step is a SpotlightCard: a faint drafting-blue wash tracks the pointer */
+.cover__step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.42rem;
+  padding: 1.15rem 1.25rem;
+  background: var(--surface-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+}
+
+.cover__stepno {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--blue);
+}
+
+.cover__steptitle {
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.cover__stephelp {
+  font-size: 0.85rem;
+  color: var(--ink-faint);
+}
+
+/* headline value word: each cycles in with a soft fade while the gradient
+   shimmer (GradientText) runs continuously */
+.cover__gradient-wrap {
+  display: inline-block;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cover__gradient-wrap {
+    animation: cover-word-in 0.45s ease both;
+  }
+}
+@keyframes cover-word-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* left-gutter dimension line — a drafting "measure" on the copy (shown wide) */
+.cover__dim {
+  display: none;
+}
+
+/* primary CTA (StarBorder): a slow blue glimmer travels the top/bottom edge */
+.cover__cta-star {
+  box-shadow: var(--shadow-card);
+  transition: transform 0.16s ease, box-shadow 0.2s;
+}
+.cover__cta-star:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sheet);
+}
+.cover__cta-star:active {
+  transform: translateY(0);
+}
+.cover__cta-star:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+.cover__cta-star .inner-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--on-blue);
+  background: var(--blue);
+  border: 1px solid var(--blue-deep);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1.6rem;
+  transition: background 0.2s;
+}
+.cover__cta-star:hover .inner-content {
+  background: var(--blue-deep);
+}
+.cover__cta-star .inner-content span {
+  transition: transform 0.16s ease;
+}
+.cover__cta-star:hover .inner-content span {
+  transform: translateX(3px);
+}
+
+/* leader note under the CTAs (a small annotation pointing at the buttons) */
+.cover__callout {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0.85rem 0 0;
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.cover__callout-line {
+  width: 26px;
+  border-top: 1px solid var(--line-strong);
+  flex: 0 0 auto;
+}
+
+/* the self-drawing key figure */
+.cover-schem__plate {
+  fill: var(--surface);
+  stroke: var(--line-strong);
+  stroke-width: 1.2;
+}
+.cover-schem__accent {
+  stroke: var(--blue);
+  stroke-width: 1.9;
+}
+.cover-schem__sweep {
+  stroke-dasharray: 3 4;
+  opacity: 0.85;
+}
+.cover-schem__label {
+  fill: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+}
+
+/* the dimension annotation only appears when there's a gutter to hold it */
+@media (min-width: 860px) {
+  .cover__copy {
+    padding-left: 2.2rem;
+  }
+  .cover__dim {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    bottom: 4.4rem;
+    width: 14px;
+    color: var(--ink-faint);
+    pointer-events: none;
+  }
+  .cover__dim-line {
+    flex: 1;
+    width: 10px;
+    stroke: var(--line-strong);
+  }
+  .cover__dim-label {
+    writing-mode: vertical-rl;
+    font-size: 0.54rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 820px) {
+  .cover__hero {
+    grid-template-columns: 1fr;
+  }
+  .cover__figure {
+    display: none;
+  }
+  .cover__steps {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* one orchestrated draw-in on load (first paint of the cover) */
+@media (prefers-reduced-motion: no-preference) {
+  .cover__masthead,
+  .cover__eyebrow,
+  .cover__title,
+  .cover__sub,
+  .cover__actions,
+  .cover__callout,
+  .cover__meta,
+  .cover__frame,
+  .cover__step-item {
+    animation: cover-rise 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+  .cover__masthead { animation-delay: 0.05s; }
+  .cover__eyebrow { animation-delay: 0.16s; }
+  .cover__title { animation-delay: 0.26s; }
+  .cover__sub { animation-delay: 0.4s; }
+  .cover__actions { animation-delay: 0.5s; }
+  .cover__callout { animation-delay: 0.56s; }
+  .cover__meta { animation-delay: 0.62s; }
+  .cover__frame { animation-delay: 0.34s; }
+  .cover__step-item:nth-child(1) { animation-delay: 0.66s; }
+  .cover__step-item:nth-child(2) { animation-delay: 0.74s; }
+  .cover__step-item:nth-child(3) { animation-delay: 0.82s; }
+
+  /* the dimension annotation just fades in late (it's absolutely placed) */
+  .cover__dim {
+    animation: cover-fade 0.7s ease 0.7s both;
+  }
+}
+
+@keyframes cover-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* On desktop/laptop the landing is a single "cover sheet" that fits the viewport
+   without scrolling: the outer/inner spacing, the headline and the key drawing
+   all scale with the screen height, so the whole sheet — masthead, hero, steps,
+   title block — is visible at once. Short/narrow screens fall back to normal
+   scrolling flow (the goal is the desktop first impression). */
+@media (min-width: 900px) and (min-height: 660px) {
+  .app[data-stage='landing'] {
+    margin-block: clamp(0.5rem, 1.6vh, 1.75rem);
+    padding-top: clamp(0.9rem, 2vh, 2.1rem);
+    padding-bottom: clamp(0.9rem, 2vh, 2.1rem);
+  }
+  .app[data-stage='landing'] .cover {
+    gap: clamp(0.8rem, 2.3vh, 2.2rem);
+  }
+  .app[data-stage='landing'] .cover__title {
+    font-size: clamp(1.9rem, 2.4vw + 1.1vh, 3.7rem);
+    margin-bottom: clamp(0.45rem, 1.2vh, 1.1rem);
+  }
+  .app[data-stage='landing'] .cover__sub {
+    margin-bottom: clamp(0.65rem, 1.7vh, 1.6rem);
+  }
+  .app[data-stage='landing'] .cover__meta {
+    margin-top: clamp(0.55rem, 1.3vh, 1.15rem);
+  }
+  .app[data-stage='landing'] .cover-schem__svg {
+    max-height: clamp(190px, 30vh, 360px);
+  }
+  .app[data-stage='landing'] .cover__step {
+    padding-block: clamp(0.65rem, 1.5vh, 1.1rem);
+  }
+  .app[data-stage='landing'] .titleblock {
+    margin-top: clamp(0.8rem, 2vh, 2.1rem);
+  }
+  /* trim the title-block rows a touch so the footer clears the fold too */
+  .app[data-stage='landing'] .titleblock__head,
+  .app[data-stage='landing'] .titleblock__cell,
+  .app[data-stage='landing'] .titleblock__note,
+  .app[data-stage='landing'] .titleblock__foot {
+    padding-block: clamp(0.42rem, 1vh, 0.85rem);
+  }
+}
+
+@keyframes cover-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }

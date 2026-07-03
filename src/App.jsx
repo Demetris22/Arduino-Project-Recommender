@@ -250,7 +250,7 @@ function App() {
           <span className="hero__brandname">Sketchef</span>
         </div>
         <h1 className="hero__title">
-          {stage === 'board' && !reduceMotion ? (
+          {!reduceMotion ? (
             <>
               <span className="hero__title-lead">What can you build</span>
               <TextType

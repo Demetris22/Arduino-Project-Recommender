@@ -340,10 +340,13 @@ button {
 .hero__title {
   margin: 0 0 0.7rem;
   font-family: var(--font-display);
-  font-size: clamp(2rem, 5.2vw, 3.35rem);
+  /* the one display flourish: Archivo's width axis, expanded to read like a
+     drafting title-block headline (body + labels stay at normal width) */
+  font-stretch: 115%;
+  font-size: clamp(2rem, 5.1vw, 3.3rem);
   font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.04;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
   text-wrap: balance;
   color: var(--ink);
 }
@@ -497,7 +500,7 @@ button {
 .results {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.1rem;
   min-width: 0;
 }
 
@@ -1196,7 +1199,7 @@ button {
 }
 
 .results-section__head {
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.7rem;
 }
 
 /* section header reads as a drafting register divider: label, rule, count */
@@ -1289,7 +1292,7 @@ button {
 }
 
 .results-section.is-collapsed {
-  padding-bottom: 1.4rem;
+  padding-bottom: 0.4rem;
 }
 
 /* free-standing plates with real gaps — a transparent track means a single
@@ -2952,7 +2955,7 @@ button {
 
 .deck {
   position: relative;
-  margin: 0.1rem 0 0.3rem;
+  margin: 0 0 0.1rem;
   /* far peeked sheets clip at the sides; the sweep still spills top/bottom */
   overflow-x: clip;
   overflow-y: visible;
@@ -3074,6 +3077,8 @@ button {
 
 .deck__plate:not(.is-active) {
   pointer-events: none; /* belt-and-braces alongside [inert] */
+  /* peeked neighbours read as "there's more", not competing content */
+  filter: blur(3px);
 }
 
 .deck__plate .project-card__title {
@@ -3201,7 +3206,7 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-top: 0.9rem;
+  margin-top: 0.7rem;
 }
 
 .deck__sheet {

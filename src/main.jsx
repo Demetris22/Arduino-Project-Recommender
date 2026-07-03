@@ -4,7 +4,9 @@ import ReactDOM from 'react-dom/client';
 // grotesque with a drafting-label feel; it carries both display and body.
 // Spline Sans Mono is the annotation/instrument voice (specs, badges, code,
 // labels). Together they set the blueprint tone.
-import '@fontsource-variable/archivo';
+// Standard axes so the display headline can use Archivo's width axis (an
+// expanded, title-block cut); body + labels stay at the default width.
+import '@fontsource-variable/archivo/standard.css';
 import '@fontsource-variable/spline-sans-mono';
 import App from './App.jsx';
 import './index.css';

@@ -17,8 +17,8 @@ function plateAnim(pos) {
   if (ap === 0) return { x: '0%', rotate: 0, scale: 1, opacity: 1 };
   const s = Math.sign(pos);
   if (ap === 1)
-    return { x: `${s * 56}%`, rotate: s * 2.4, scale: 0.9, opacity: 0.5 };
-  return { x: `${s * 92}%`, rotate: s * 3.6, scale: 0.8, opacity: 0.12 };
+    return { x: `${s * 56}%`, rotate: s * 2.4, scale: 0.9, opacity: 0.32 };
+  return { x: `${s * 92}%`, rotate: s * 3.6, scale: 0.8, opacity: 0.08 };
 }
 
 const pad2 = (n) => String(n).padStart(2, '0');

@@ -4,6 +4,7 @@
 import { useMemo, useState } from 'react';
 import Modal from './Modal.jsx';
 import Icon from './Icon.jsx';
+import DifficultyStamp from './DifficultyStamp.jsx';
 import { formatTime } from '../lib/format.js';
 
 // Split a wiring line on the arrow into [part, connection].
@@ -55,9 +56,7 @@ function ProjectDetail({ project, components, onClose }) {
             {project.title}
           </h2>
           <div className="detail__meta">
-            <span className={`badge badge--${project.difficulty}`}>
-              {project.difficulty}
-            </span>
+            <DifficultyStamp level={project.difficulty} />
             <span className="detail__time">
               <Icon name="timer" />{' '}
               <span className="mono">{formatTime(project.timeMinutes)}</span>

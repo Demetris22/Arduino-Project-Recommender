@@ -1,5 +1,74 @@
 // Single-select board chooser. Exactly one board is always selected.
-// Surfaces a few telling specs per board so the hardware story is visible.
+// Each board is a little schematic drawing (BoardGlyph) with its datasheet
+// tucked behind a "View details" toggle so the cards stay uncluttered.
+import { useState } from 'react';
+import BoardGlyph from './BoardGlyph.jsx';
+
+function BoardCard({ board, selected, onSelect }) {
+  const [open, setOpen] = useState(false);
+  const hasWifi = board.features.includes('wifi');
+  const hasBt = board.features.includes('bluetooth');
+  const radio = [hasWifi && 'WiFi', hasBt && 'BT'].filter(Boolean).join(' · ');
+
+  return (
+    <article
+      className={`board-card${selected ? ' is-selected' : ''}${
+        open ? ' is-open' : ''
+      }`}
+    >
+      <button
+        type="button"
+        className="board-card__select"
+        aria-pressed={selected}
+        onClick={() => onSelect(board.id)}
+      >
+        <BoardGlyph board={board} />
+        <span className="board-card__name">{board.name}</span>
+      </button>
+
+      <button
+        type="button"
+        className="board-card__toggle"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+      >
+        <span>{open ? 'Hide details' : 'View details'}</span>
+        <span className="board-card__toggle-icon" aria-hidden="true">
+          ▾
+        </span>
+      </button>
+
+      {open && (
+        <dl className="board-spec">
+          <div className="board-spec__cell">
+            <dt>Digital</dt>
+            <dd className="mono">{board.digitalPins}</dd>
+          </div>
+          <div className="board-spec__cell">
+            <dt>Analog</dt>
+            <dd className="mono">{board.analogPins}</dd>
+          </div>
+          <div className="board-spec__cell">
+            <dt>PWM</dt>
+            <dd className="mono">{board.pwmPins}</dd>
+          </div>
+          <div className="board-spec__cell board-spec__cell--v">
+            <dt>Logic</dt>
+            <dd className="mono">{board.logicVoltage}V</dd>
+          </div>
+          <div
+            className={`board-spec__cell board-spec__cell--radio${
+              radio ? '' : ' is-none'
+            }`}
+          >
+            <dt>Radio</dt>
+            <dd className="mono">{radio || 'None'}</dd>
+          </div>
+        </dl>
+      )}
+    </article>
+  );
+}
 
 function BoardPicker({ boards, selectedBoardId, onSelect, showTitle = true }) {
   return (
@@ -17,37 +86,15 @@ function BoardPicker({ boards, selectedBoardId, onSelect, showTitle = true }) {
         </div>
       )}
 
-      <div className="board-grid" role="radiogroup" aria-label="Arduino board">
-        {boards.map((board) => {
-          const selected = board.id === selectedBoardId;
-          const hasWifi = board.features.includes('wifi');
-          const hasBt = board.features.includes('bluetooth');
-          return (
-            <button
-              key={board.id}
-              type="button"
-              role="radio"
-              aria-checked={selected}
-              className={`board-card${selected ? ' is-selected' : ''}`}
-              onClick={() => onSelect(board.id)}
-            >
-              <span className="board-card__name">{board.name}</span>
-              <span className="board-card__specs">
-                <span className="spec" title="Digital pins">
-                  {board.digitalPins} digital
-                </span>
-                <span className="spec" title="Analog pins">
-                  {board.analogPins} analog
-                </span>
-                <span className="spec spec--voltage" title="Logic voltage">
-                  {board.logicVoltage}V
-                </span>
-                {hasWifi && <span className="spec spec--radio">WiFi</span>}
-                {hasBt && <span className="spec spec--radio">BT</span>}
-              </span>
-            </button>
-          );
-        })}
+      <div className="board-grid" role="group" aria-label="Arduino board">
+        {boards.map((board) => (
+          <BoardCard
+            key={board.id}
+            board={board}
+            selected={board.id === selectedBoardId}
+            onSelect={onSelect}
+          />
+        ))}
       </div>
     </section>
   );

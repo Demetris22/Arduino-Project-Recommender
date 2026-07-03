@@ -12,12 +12,17 @@ import BoardPicker from './components/BoardPicker.jsx';
 import ComponentSelector from './components/ComponentSelector.jsx';
 import ResultsSection from './components/ResultsSection.jsx';
 import ResultsControls from './components/ResultsControls.jsx';
+import ProjectDeck from './components/ProjectDeck.jsx';
+import EmptyPlate from './components/EmptyPlate.jsx';
+import NearMissBoard from './components/NearMissBoard.jsx';
 import ProjectDetail from './components/ProjectDetail.jsx';
 import ShareButton from './components/ShareButton.jsx';
 import Atmosphere from './components/Atmosphere.jsx';
 import NextPurchase from './components/NextPurchase.jsx';
 import StepIndicator from './components/StepIndicator.jsx';
 import Icon from './components/Icon.jsx';
+import HeroSchematic from './components/HeroSchematic.jsx';
+import TextType from './components/TextType.jsx';
 
 const data = { boards, components, projects };
 const DEFAULT_BOARD_ID = boards[0].id;
@@ -75,6 +80,34 @@ function App() {
   const [editing, setEditing] = useState(null);
   // On-demand secondary tools in the results stage.
   const [showNextBuy, setShowNextBuy] = useState(false);
+
+  // How the buildable projects are presented: a flip-through 'deck' (default)
+  // or the scan-everything 'grid'. Remembered across visits.
+  const [buildView, setBuildView] = useState(() => {
+    try {
+      return localStorage.getItem('sketchef:buildView') === 'grid'
+        ? 'grid'
+        : 'deck';
+    } catch {
+      return 'deck';
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem('sketchef:buildView', buildView);
+    } catch {
+      // storage unavailable (private mode) — the in-memory state still works.
+    }
+  }, [buildView]);
+
+  // One orchestrated page-load reveal: the sheet is "drawn" once on first paint.
+  // The staggered CSS is gated on prefers-reduced-motion; this flag only scopes
+  // it to the initial mount so later stage changes animate normally.
+  const [intro, setIntro] = useState(true);
+  useEffect(() => {
+    const t = setTimeout(() => setIntro(false), 1500);
+    return () => clearTimeout(t);
+  }, []);
 
   // The project whose build instructions are open in the modal (null = closed).
   const [activeProject, setActiveProject] = useState(null);
@@ -142,6 +175,8 @@ function App() {
     filtered.nearMiss.length === 0 &&
     filtered.incompatible.length === 0;
 
+  const hasBuildable = filtered.buildable.length > 0;
+
   // Highest-leverage parts to buy next (display-only; engine untouched).
   const recommendations = useMemo(
     () =>
@@ -198,11 +233,12 @@ function App() {
       };
 
   return (
-    <div className="app" data-stage={stage}>
+    <div className={`app${intro ? ' is-intro' : ''}`} data-stage={stage}>
       <a className="skip-link" href="#main">Skip to content</a>
       <Atmosphere />
 
       <header className="hero">
+        <div className="hero__main">
         <div className="hero__brand">
           <img
             className="hero__logo"
@@ -212,10 +248,34 @@ function App() {
             height="36"
           />
           <span className="hero__brandname">Sketchef</span>
-          <span className="hero__led" aria-hidden="true" />
         </div>
         <h1 className="hero__title">
-          What can you build <span className="hero__accent">right now?</span>
+          {stage === 'board' && !reduceMotion ? (
+            <>
+              <span className="hero__title-lead">What can you build</span>
+              <TextType
+                as="span"
+                className="hero__type"
+                text={[
+                  'right now?',
+                  'this weekend?',
+                  'with what you own?',
+                  'tonight?',
+                ]}
+                typingSpeed={68}
+                deletingSpeed={38}
+                pauseDuration={1900}
+                initialDelay={350}
+                showCursor
+                cursorCharacter="|"
+                cursorClassName="hero__type-cursor"
+              />
+            </>
+          ) : (
+            <>
+              What can you build <span className="hero__accent">right now?</span>
+            </>
+          )}
         </h1>
         {stage !== 'results' && (
           <p className="hero__lede">
@@ -239,6 +299,8 @@ function App() {
             </div>
           </dl>
         )}
+        </div>
+        <HeroSchematic />
       </header>
 
       <main className="flow" id="main">
@@ -392,6 +454,8 @@ function App() {
                   difficulties={difficultyFilters}
                   onToggleDifficulty={toggleDifficulty}
                   onClearDifficulties={clearDifficulties}
+                  view={buildView}
+                  onView={hasBuildable ? setBuildView : undefined}
                 />
               </div>
 
@@ -430,46 +494,70 @@ function App() {
                 </div>
               ) : (
                 <>
-                  <ResultsSection
-                    id="buildable"
-                    title="You can build these"
-                    subtitle="You own every part and your board can run it."
-                    items={filtered.buildable}
-                    variant="buildable"
-                    tone="buildable"
-                    emptyText={
-                      filtersActive
-                        ? 'No buildable projects match your filters.'
-                        : "Nothing fully buildable yet. Check the near-misses below, you're probably close."
-                    }
-                    onOpen={setActiveProject}
-                  />
-                  <ResultsSection
-                    id="near-miss"
-                    title="One or two parts away"
-                    subtitle="Grab the missing components and these are yours."
+                  {hasBuildable ? (
+                    buildView === 'deck' ? (
+                      <ProjectDeck
+                        items={filtered.buildable}
+                        onOpen={setActiveProject}
+                      />
+                    ) : (
+                      <ResultsSection
+                        id="buildable"
+                        view="gallery"
+                        title="You can build these"
+                        subtitle="You own every part and your board can run it."
+                        items={filtered.buildable}
+                        variant="buildable"
+                        tone="buildable"
+                        onOpen={setActiveProject}
+                      />
+                    )
+                  ) : (
+                    <ResultsSection
+                      id="buildable"
+                      view="gallery"
+                      title="You can build these"
+                      subtitle="You own every part and your board can run it."
+                      items={filtered.buildable}
+                      variant="buildable"
+                      tone="buildable"
+                      emptyNode={
+                        <EmptyPlate stamp="No complete builds yet">
+                          {filtersActive
+                            ? 'No buildable projects match your filters.'
+                            : "Add a part or two and a build unlocks — check the near-misses below, you're probably close."}
+                        </EmptyPlate>
+                      }
+                      onOpen={setActiveProject}
+                    />
+                  )}
+
+                  <NearMissBoard
                     items={filtered.nearMiss}
-                    variant="near"
-                    tone="near"
-                    emptyText={
-                      filtersActive
-                        ? 'No near-misses match your filters.'
-                        : 'No near-misses right now. Add more parts to unlock these.'
-                    }
                     onOpen={setActiveProject}
+                    emptyNode={
+                      <EmptyPlate stamp="No pending drawings">
+                        {filtersActive
+                          ? 'No near-misses match your filters.'
+                          : 'You own every part for the builds above — nothing waiting on one more component.'}
+                      </EmptyPlate>
+                    }
                   />
                   <ResultsSection
                     id="incompatible"
+                    view="gallery"
                     title="Not compatible with this board"
                     subtitle={`Ruled out by the ${selectedBoard.name}.`}
                     items={filtered.incompatible}
                     variant="incompatible"
                     tone="muted"
                     collapsible
-                    emptyText={
-                      filtersActive
-                        ? 'No incompatible projects match your filters.'
-                        : 'Every project in the catalog works with this board.'
+                    emptyNode={
+                      <EmptyPlate stamp="All in spec">
+                        {filtersActive
+                          ? 'No incompatible projects match your filters.'
+                          : `Every project in the catalog runs on the ${selectedBoard.name}.`}
+                      </EmptyPlate>
                     }
                   />
                 </>
@@ -480,18 +568,48 @@ function App() {
         </AnimatePresence>
       </main>
 
-      <footer className="footer">
-        <p className="footer__by">
-          Built by{' '}
-          <a
-            className="footer__link"
-            href="https://github.com/Demetris22"
-            target="_blank"
-            rel="noreferrer noopener"
-          >
-            Demetris Demetriou
-          </a>{' '}
-          ·{' '}
+      <footer className="titleblock">
+        <div className="titleblock__head">
+          <div>
+            <p className="titleblock__name">Sketchef</p>
+            <p className="titleblock__tag">Arduino project finder</p>
+          </div>
+          <p className="titleblock__sheet mono">SHEET 01 / 01</p>
+        </div>
+        <dl className="titleblock__grid">
+          <div className="titleblock__cell">
+            <dt>Boards</dt>
+            <dd className="mono">{boards.length}</dd>
+          </div>
+          <div className="titleblock__cell">
+            <dt>Components</dt>
+            <dd className="mono">{components.length}</dd>
+          </div>
+          <div className="titleblock__cell">
+            <dt>Projects</dt>
+            <dd className="mono">{projects.length}</dd>
+          </div>
+          <div className="titleblock__cell">
+            <dt>Scale</dt>
+            <dd className="mono">1:1</dd>
+          </div>
+        </dl>
+        <p className="titleblock__note">
+          <span className="titleblock__note-tag mono">Rev. A</span>
+          New projects and Arduino boards coming soon…
+        </p>
+        <div className="titleblock__foot">
+          <p className="titleblock__by">
+            Drawn by{' '}
+            <a
+              className="footer__link"
+              href="https://github.com/Demetris22"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              Demetris Demetriou
+            </a>
+          </p>
           <a
             className="footer__link"
             href="https://github.com/Demetris22/Arduino-Project-Recommender"
@@ -500,11 +618,7 @@ function App() {
           >
             View source
           </a>
-        </p>
-        <p className="footer__meta">
-          {projects.length} projects across {boards.length} boards and{' '}
-          {components.length} components. Runs entirely in your browser.
-        </p>
+        </div>
       </footer>
 
       {activeProject && (

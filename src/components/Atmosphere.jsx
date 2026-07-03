@@ -3,10 +3,21 @@
 // The cursor glow is wired only for fine pointers and is skipped entirely
 // under prefers-reduced-motion; the CSS drift animations are neutralized by
 // the global reduced-motion rule.
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import DotField from './DotField.jsx';
 
 function Atmosphere() {
   const ref = useRef(null);
+
+  // The interactive dot field runs a canvas loop, so only spin it up where it
+  // pays off: fine pointers (cursor to react to) and motion allowed.
+  const [showDots] = useState(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return false;
+    return (
+      window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    );
+  });
 
   useEffect(() => {
     const el = ref.current;
@@ -46,6 +57,21 @@ function Atmosphere() {
       <div className="atmosphere__base" />
       <div className="atmosphere__aurora" />
       <div className="atmosphere__cursor" />
+      {showDots && (
+        <div className="atmosphere__dots">
+          <DotField
+            dotRadius={1.4}
+            dotSpacing={16}
+            bulgeStrength={48}
+            glowRadius={150}
+            sparkle={false}
+            waveAmplitude={0}
+            gradientFrom="rgba(37, 99, 176, 0.30)"
+            gradientTo="rgba(37, 99, 176, 0.12)"
+            glowColor="rgba(37, 99, 176, 0.12)"
+          />
+        </div>
+      )}
     </div>
   );
 }

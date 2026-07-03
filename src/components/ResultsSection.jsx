@@ -1,14 +1,18 @@
-// A labelled result section wrapping a grid of ProjectCards.
-// `items` are already in render order (the engine pre-sorts them).
-// New cards animate in via CSS; cards that move when the list recomputes are
-// smoothly reflowed with a lightweight FLIP (skipped under reduced motion).
-import { useLayoutEffect, useRef, useState } from 'react';
+// A labelled result section wrapping its projects. `items` are already in
+// render order (the engine pre-sorts them). Renders either as a rich card
+// 'gallery' or a dense 'index' register, switchable by the caller.
+// Within a view, cards that move when the list recomputes are smoothly
+// reflowed with a lightweight FLIP; switching view instead replays the CSS
+// entrance (the FLIP is skipped for that frame so the two don't fight).
+import { useLayoutEffect, useRef } from 'react';
+import { useState } from 'react';
 import ProjectCard from './ProjectCard.jsx';
 import AnimatedNumber from './AnimatedNumber.jsx';
 
-function useFlipReflow() {
+function useFlipReflow(resetKey) {
   const gridRef = useRef(null);
   const prevRects = useRef(new Map());
+  const prevKey = useRef(resetKey);
 
   useLayoutEffect(() => {
     const grid = gridRef.current;
@@ -20,6 +24,11 @@ function useFlipReflow() {
     const reduce =
       window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
+    // A layout switch (gallery <-> index) remounts the list and plays the CSS
+    // entrance; don't also FLIP that frame.
+    const keyChanged = prevKey.current !== resetKey;
+    prevKey.current = resetKey;
+
     const children = Array.from(grid.children);
     const newRects = new Map();
     children.forEach((child) => {
@@ -27,7 +36,7 @@ function useFlipReflow() {
       if (id) newRects.set(id, child.getBoundingClientRect());
     });
 
-    if (!reduce && typeof grid.animate !== 'undefined') {
+    if (!reduce && !keyChanged && typeof grid.animate !== 'undefined') {
       children.forEach((child) => {
         const id = child.dataset.flipId;
         const before = prevRects.current.get(id);
@@ -59,11 +68,13 @@ function ResultsSection({
   items,
   variant,
   emptyText,
+  emptyNode,
   tone,
   onOpen,
+  view = 'gallery',
   collapsible = false,
 }) {
-  const gridRef = useFlipReflow();
+  const gridRef = useFlipReflow(view);
   // Collapsible sections (e.g. incompatible) start collapsed.
   const [open, setOpen] = useState(!collapsible);
   const showBody = !collapsible || open;
@@ -92,6 +103,7 @@ function ResultsSection({
               onClick={() => setOpen((v) => !v)}
             >
               {title}
+              <span className="results-section__rule" aria-hidden="true" />
               {count}
               <span className="results-section__chevron" aria-hidden="true">
                 ▾
@@ -100,6 +112,7 @@ function ResultsSection({
           ) : (
             <>
               {title}
+              <span className="results-section__rule" aria-hidden="true" />
               {count}
             </>
           )}
@@ -111,11 +124,16 @@ function ResultsSection({
 
       {showBody &&
         (items.length === 0 ? (
-          <p className="results-empty" id={`${id}-body`}>
-            {emptyText}
-          </p>
+          <div id={`${id}-body`}>
+            {emptyNode ?? <p className="results-empty">{emptyText}</p>}
+          </div>
         ) : (
-          <div className="project-grid" id={`${id}-body`} ref={gridRef}>
+          <div
+            className={view === 'index' ? 'project-index' : 'project-grid'}
+            id={`${id}-body`}
+            ref={gridRef}
+            key={view}
+          >
             {items.map((item, index) => {
               // Buildable items are bare projects; near-miss/incompatible wrap one.
               const project = item.project ?? item;
@@ -126,6 +144,7 @@ function ResultsSection({
                   missing={item.missing}
                   reasons={item.reasons}
                   variant={variant}
+                  view={view}
                   index={index}
                   onOpen={onOpen}
                 />

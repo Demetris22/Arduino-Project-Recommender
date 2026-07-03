@@ -91,7 +91,11 @@ function ComponentSelector({
           <div key={category} className="component-group" data-category={category}>
             <h3 className="component-group__heading">
               <span className="component-group__dot" aria-hidden="true" />
-              {CATEGORY_LABELS[category] ?? category}
+              <span className="component-group__label">
+                {CATEGORY_LABELS[category] ?? category}
+              </span>
+              <span className="component-group__rule" aria-hidden="true" />
+              <span className="component-group__count mono">{items.length}</span>
             </h3>
             <div className="chip-grid">
               {items.map((component) => {

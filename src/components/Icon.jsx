@@ -40,6 +40,33 @@ const PATHS = {
   ),
   // funnel
   filter: <path d="M4 5h16l-6.5 8v6l-3 -2v-4z" />,
+  // 2x2 tiles
+  grid: (
+    <>
+      <rect x="4" y="4" width="7" height="7" rx="1" />
+      <rect x="13" y="4" width="7" height="7" rx="1" />
+      <rect x="4" y="13" width="7" height="7" rx="1" />
+      <rect x="13" y="13" width="7" height="7" rx="1" />
+    </>
+  ),
+  // register rows with leading marks
+  list: (
+    <>
+      <path d="M9 6h11" />
+      <path d="M9 12h11" />
+      <path d="M9 18h11" />
+      <path d="M4 6h.01" />
+      <path d="M4 12h.01" />
+      <path d="M4 18h.01" />
+    </>
+  ),
+  // a stacked deck of sheets (front plate + one behind it)
+  deck: (
+    <>
+      <rect x="3" y="8" width="12" height="13" rx="1.5" />
+      <path d="M7 5h10a2 2 0 0 1 2 2v10" />
+    </>
+  ),
 };
 
 function Icon({ name, className, size = '1em', strokeWidth = 1.75 }) {

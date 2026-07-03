@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 
 import boards from './data/boards.json';
@@ -210,9 +210,17 @@ function App() {
   const chooseBoardInline = (id) => {
     setSelectedBoardId(id);
     setEditing(null);
+    revealResults();
   };
 
-  const editStep = (step) => setEditing((cur) => (cur === step ? null : step));
+  // Snapshot the owned parts when the parts editor opens, so we can tell whether
+  // the user has actually changed the list (drives the "Apply Changes" button).
+  const partsSnapshot = useRef([]);
+  const editStep = (step) => {
+    const next = editing === step ? null : step;
+    if (next === 'parts') partsSnapshot.current = ownedComponentIds;
+    setEditing(next);
+  };
 
   // Jump straight to results with a sensible starter selection.
   const loadExample = () => {
@@ -231,6 +239,33 @@ function App() {
         exit: { opacity: 0, y: -8 },
         transition: { duration: 0.28, ease: [0.22, 0.61, 0.36, 1] },
       };
+
+  // Inline edits (board/parts) recompute the results silently. After an edit,
+  // bring the results into view and flag them briefly so the update is obvious.
+  const resultsRef = useRef(null);
+  const [resultsPulse, setResultsPulse] = useState(false);
+
+  const revealResults = () => {
+    setResultsPulse(true);
+    window.setTimeout(() => setResultsPulse(false), 1400);
+    requestAnimationFrame(() => {
+      resultsRef.current?.scrollIntoView({
+        behavior: reduceMotion ? 'auto' : 'smooth',
+        block: 'start',
+      });
+    });
+  };
+
+  const applyPartsEdit = () => {
+    setEditing(null);
+    revealResults();
+  };
+
+  // True once the parts list differs from what it was when the editor opened.
+  const partsChanged =
+    editing === 'parts' &&
+    (partsSnapshot.current.length !== ownedComponentIds.length ||
+      ownedComponentIds.some((id) => !partsSnapshot.current.includes(id)));
 
   return (
     <div className={`app${intro ? ' is-intro' : ''}`} data-stage={stage}>
@@ -427,21 +462,27 @@ function App() {
                 <div className="stage__actions">
                   <button
                     type="button"
-                    className="text-btn"
-                    onClick={() => setEditing(null)}
+                    className="primary-btn"
+                    onClick={applyPartsEdit}
+                    disabled={!partsChanged}
                   >
-                    Done editing parts
+                    Apply Changes
                   </button>
                 </div>
               </div>
             )}
 
-            <div className="results">
+            <div className="results" ref={resultsRef}>
               <div className="results__bar">
                 <div className="step-head step-head--inline">
                   <p className="step-head__eyebrow">What you can build</p>
                   <h2 className="step-head__title results__heading">
                     Your projects
+                    {resultsPulse && (
+                      <span className="results__updated" aria-live="polite">
+                        Updated
+                      </span>
+                    )}
                   </h2>
                   <p className="step-head__help">
                     Tap a project for wiring, steps and code, or refine with

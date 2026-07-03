@@ -502,6 +502,37 @@ button {
   flex-direction: column;
   gap: 1.1rem;
   min-width: 0;
+  /* land below the sticky summary bar when scrolled to after an edit */
+  scroll-margin-top: 4.5rem;
+}
+
+/* transient "Updated" flag shown after an inline edit re-runs the results */
+.results__updated {
+  display: inline-block;
+  margin-left: 0.6rem;
+  vertical-align: middle;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--on-blue);
+  background: var(--blue);
+  padding: 0.16rem 0.44rem;
+  border-radius: var(--radius-xs);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .results__updated {
+    animation: results-updated 1.4s ease forwards;
+  }
+}
+
+@keyframes results-updated {
+  0% { opacity: 0; transform: translateY(-3px); }
+  14% { opacity: 1; transform: none; }
+  72% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 @media (max-width: 880px) {
@@ -2130,6 +2161,21 @@ button {
 
 .primary-btn:active {
   transform: translateY(0);
+}
+
+/* greyed out until there's an actual change to apply — reads as not clickable */
+.primary-btn:disabled {
+  color: var(--ink-faint);
+  background: var(--surface-sunken);
+  border-color: var(--line-strong);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.primary-btn:disabled:hover {
+  transform: none;
+  background: var(--surface-sunken);
+  box-shadow: none;
 }
 
 .stage__example {

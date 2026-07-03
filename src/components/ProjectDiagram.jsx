@@ -88,7 +88,85 @@ function symbol(kind, cx, cy) {
   }
 }
 
+// The two Uno R4 projects that drive the board's built-in 12x8 LED matrix have
+// no external parts, so the parts-schematic has nothing to draw. Render the
+// matrix itself instead, lit with the exact pattern each sketch shows — a
+// smiley for one, "R4" text for the scrolling-text one.
+const M_COLS = 12;
+const M_ROWS = 8;
+
+const MATRIX_SMILEY = [
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0],
+  [0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+  [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+  [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+];
+
+// "R4" in a 5x7 face — a nod to the board this scrolls text on.
+const MATRIX_TEXT = [
+  [1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0],
+  [1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0],
+  [1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0],
+  [1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0],
+  [1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0],
+  [1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
+  [1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+];
+
+function MatrixGlyph({ frame }) {
+  const x0 = 18;
+  const y0 = 12;
+  const px = 6;
+  const py = 4.6;
+  const dots = [];
+  for (let r = 0; r < M_ROWS; r += 1) {
+    for (let c = 0; c < M_COLS; c += 1) {
+      const cx = +(x0 + c * px).toFixed(1);
+      const cy = +(y0 + r * py).toFixed(1);
+      dots.push(
+        frame[r][c] === 1 ? (
+          <circle key={`${r}-${c}`} className="pd-fill" cx={cx} cy={cy} r="2.1" />
+        ) : (
+          <circle
+            key={`${r}-${c}`}
+            cx={cx}
+            cy={cy}
+            r="1"
+            fill="currentColor"
+            opacity="0.22"
+          />
+        )
+      );
+    }
+  }
+  return (
+    <svg
+      className="project-diagram"
+      viewBox="0 0 104 56"
+      preserveAspectRatio="xMinYMid meet"
+      fill="none"
+      stroke="currentColor"
+      aria-hidden="true"
+      focusable="false"
+    >
+      {/* the board's on-board LED matrix module */}
+      <rect x="6" y="5" width="90" height="46" rx="4" strokeWidth="1.6" />
+      <g>{dots}</g>
+    </svg>
+  );
+}
+
 function ProjectDiagram({ project }) {
+  if (project.id === 'r4-led-matrix-smiley')
+    return <MatrixGlyph frame={MATRIX_SMILEY} />;
+  if (project.id === 'r4-led-matrix-scroll')
+    return <MatrixGlyph frame={MATRIX_TEXT} />;
+
   const parts = (project.requires ?? [])
     .map((id) => kindOf(BY_ID.get(id)))
     .filter(Boolean);

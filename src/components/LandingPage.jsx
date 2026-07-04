@@ -5,20 +5,16 @@
 // the drawing set (the board/parts selection flow). Drafting annotations (a
 // dimension line on the copy, a leader on the CTA) make it read as an annotated
 // drawing rather than a marketing template. The whole sheet draws itself on load.
-import { useEffect, useState } from 'react';
 import CoverSchematic from './CoverSchematic.jsx';
-import GradientText from './GradientText.jsx';
+import TextType from './TextType.jsx';
 import SpotlightCard from './SpotlightCard.jsx';
 import StarBorder from './StarBorder.jsx';
 
-// The value word after "build" cycles, each filled with a slow gradient shimmer.
+// The value word after "build" is typed out (TextType), cycling the phrases.
 // Kept to similar lengths so each sits on a single line at the same size.
 const WORDS = ['right now?', 'this weekend?', 'with your kit?', 'tonight?'];
 // The widest phrase reserves the line height so cycling never reflows the title.
 const LONGEST_WORD = WORDS.reduce((a, b) => (b.length > a.length ? b : a));
-// Gradient stops in the Blueprint blue family (no neon) — first == last for a
-// seamless shimmer as it eases back and forth.
-const GRADIENT_COLORS = ['#20406e', '#2563b0', '#5a8ccc', '#2563b0', '#20406e'];
 
 const STEPS = [
   { no: '01', title: 'Pick your board', help: 'Uno, Nano, Mega, ESP32 or Uno R4.' },
@@ -27,14 +23,6 @@ const STEPS = [
 ];
 
 function LandingPage({ reduceMotion, onStart, onExample }) {
-  const [wordIndex, setWordIndex] = useState(0);
-
-  useEffect(() => {
-    if (reduceMotion) return undefined;
-    const id = setInterval(() => setWordIndex((i) => (i + 1) % WORDS.length), 2900);
-    return () => clearInterval(id);
-  }, [reduceMotion]);
-
   return (
     <section className="cover" aria-labelledby="cover-title">
       <header className="cover__masthead">
@@ -76,16 +64,19 @@ function LandingPage({ reduceMotion, onStart, onExample }) {
                     with your kit?
                   </span>
                 ) : (
-                  <span className="cover__gradient-wrap" key={wordIndex} aria-hidden="true">
-                    <GradientText
-                      className="cover__gradient"
-                      colors={GRADIENT_COLORS}
-                      animationSpeed={6}
-                      direction="horizontal"
-                    >
-                      {WORDS[wordIndex]}
-                    </GradientText>
-                  </span>
+                  <TextType
+                    as="span"
+                    className="cover__type"
+                    text={WORDS}
+                    typingSpeed={70}
+                    deletingSpeed={38}
+                    pauseDuration={1800}
+                    initialDelay={400}
+                    showCursor
+                    cursorCharacter="|"
+                    cursorClassName="cover__type-cursor"
+                    aria-hidden="true"
+                  />
                 )}
               </span>
             </span>

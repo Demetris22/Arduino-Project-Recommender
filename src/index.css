@@ -3936,24 +3936,24 @@ button {
   color: var(--ink-faint);
 }
 
-/* headline value word: each cycles in with a soft fade while the gradient
-   shimmer (GradientText) runs continuously */
-.cover__gradient-wrap {
-  display: inline-block;
+/* headline value word: typed out (TextType) and filled with a slow blue
+   gradient shimmer clipped to the glyphs */
+.cover__type .text-type__content {
+  background-image: linear-gradient(90deg, #20406e, #2563b0, #5a8ccc, #2563b0, #20406e);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .cover__gradient-wrap {
-    animation: cover-word-in 0.45s ease both;
+  .cover__type .text-type__content {
+    animation: cover-type-shimmer 7s linear infinite;
   }
 }
-@keyframes cover-word-in {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
+@keyframes cover-type-shimmer {
   to {
-    opacity: 1;
-    transform: none;
+    background-position: 200% center;
   }
 }
 

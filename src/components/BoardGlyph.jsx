@@ -5,6 +5,11 @@
 // small, a Mega reads long, an ESP32 reads like a radio module, and an Uno R3
 // (USB-B) is distinguishable from an R4 (USB-C + antenna).
 //
+// Each board carries its own MUTED real-hardware colour (a teal Uno/Mega, a
+// slate Nano, a charcoal ESP32 with a silver RF can) so the five boards read as
+// distinct physical objects resting on the blueprint — not one glyph repeated.
+// The colours are desaturated + cooled to sit inside the dark field.
+//
 // Purely decorative — the board name and spec tags beside it carry the real
 // information for assistive tech, so the <svg> is aria-hidden.
 
@@ -24,6 +29,21 @@ function profileOf(board) {
   if (/r4/i.test(s))
     return { w: 178, h: 82, usb: 'c', barrel: true, headers: false, shield: false };
   return { w: 178, h: 82, usb: 'b', barrel: true, headers: false, shield: false };
+}
+
+// Muted, field-tuned real colours per board: the fabrication (PCB) fill, the
+// silkscreen ink (light lines/labels drawn on the board), and a flag for the
+// metal RF shield can. Kept desaturated so they belong on the blueprint.
+function paletteOf(board) {
+  const s = `${board.name || ''} ${board.id || ''}`.toLowerCase();
+  if (/esp32|esp8266|devkit|nodemcu|wemos|feather|xiao/.test(s))
+    return { pcbA: '#2c313b', pcbB: '#181b22', edge: '#0c0e13', silk: '#d7dee7', shield: true };
+  if (/nano|micro|mini/.test(s))
+    return { pcbA: '#2d5178', pcbB: '#193050', edge: '#101f34', silk: '#dfeaf7', shield: false };
+  if (/r4/.test(s))
+    return { pcbA: '#1a6e7a', pcbB: '#103e49', edge: '#082830', silk: '#daeeee', shield: false };
+  // uno / mega / default: classic muted Arduino teal
+  return { pcbA: '#1f7370', pcbB: '#124d4b', edge: '#082e2d', silk: '#dbefec', shield: false };
 }
 
 // Evenly spaced header ticks across [x0, x1] on a horizontal edge; capped so a
@@ -52,43 +72,29 @@ function vComb(count, y0, y1, x, len, dir) {
 }
 
 // USB connector jutting from the left edge, drawn to the right size/shape for
-// its type — a fat Type-B, a rounded Type-C, or a small mini/micro.
+// its type — a fat Type-B, a rounded Type-C, or a small mini/micro. Filled a
+// metal silver so it reads as a real connector shell.
 function usbShape(type, x, yMid) {
+  const metal = '#aab4bf';
   if (type === 'b') {
     return (
-      <rect
-        x={x - 14}
-        y={yMid - 11}
-        width="14"
-        height="22"
-        rx="1.5"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.4"
-      />
+      <rect x={x - 14} y={yMid - 11} width="14" height="22" rx="1.5" fill={metal}
+        stroke="currentColor" strokeWidth="1.1" />
     );
   }
   if (type === 'c') {
     return (
-      <rect
-        x={x - 10}
-        y={yMid - 7}
-        width="10"
-        height="14"
-        rx="6"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.4"
-      />
+      <rect x={x - 10} y={yMid - 7} width="10" height="14" rx="6" fill={metal}
+        stroke="currentColor" strokeWidth="1.1" />
     );
   }
   // mini / micro — a small trapezoidal shell
   return (
     <path
-      d={`M ${x} ${yMid - 5} L ${x - 8} ${yMid - 5} L ${x - 9} ${yMid - 3.5} L ${x - 9} ${yMid + 3.5} L ${x - 8} ${yMid + 5} L ${x} ${yMid + 5}`}
-      fill="none"
+      d={`M ${x} ${yMid - 5} L ${x - 8} ${yMid - 5} L ${x - 9} ${yMid - 3.5} L ${x - 9} ${yMid + 3.5} L ${x - 8} ${yMid + 5} L ${x} ${yMid + 5} Z`}
+      fill={metal}
       stroke="currentColor"
-      strokeWidth="1.4"
+      strokeWidth="1.1"
       strokeLinejoin="round"
     />
   );
@@ -96,6 +102,10 @@ function usbShape(type, x, yMid) {
 
 function BoardGlyph({ board }) {
   const f = profileOf(board);
+  const c = paletteOf(board);
+  const uid = String(board.id || board.name || 'b').replace(/[^a-z0-9]/gi, '');
+  const plateFill = `plate-${uid}`;
+  const shieldFill = `shield-${uid}`;
   const pw = f.w;
   const ph = f.h;
   const px = Math.round((FRAME_W - pw) / 2);
@@ -123,11 +133,24 @@ function BoardGlyph({ board }) {
     <svg
       className="board-glyph"
       viewBox={`0 0 ${FRAME_W} ${FRAME_H}`}
+      style={{ color: c.silk }}
       aria-hidden="true"
       focusable="false"
     >
-      {/* header combs, drawn from the real pin counts */}
-      <g stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" opacity="0.85">
+      {/* per-board top-lit fabrication fill + (optionally) a metal shield can */}
+      <defs>
+        <linearGradient id={plateFill} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={c.pcbA} />
+          <stop offset="1" stopColor={c.pcbB} />
+        </linearGradient>
+        <linearGradient id={shieldFill} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#c3ccd6" />
+          <stop offset="1" stopColor="#8b96a2" />
+        </linearGradient>
+      </defs>
+
+      {/* header combs, drawn from the real pin counts (silkscreen ink) */}
+      <g stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" opacity="0.9">
         {comb(board.digitalPins, px + inset, px + pw - inset, py, 9, -1)}
         {comb(board.analogPins, px + inset, px + pw - inset, py + ph, 9, 1)}
       </g>
@@ -137,13 +160,13 @@ function BoardGlyph({ board }) {
 
       {/* barrel power jack, below the USB */}
       {f.barrel && (
-        <g fill="none" stroke="currentColor" strokeWidth="1.4">
+        <g fill="#8b96a2" stroke="currentColor" strokeWidth="1.1">
           <rect x={px - 13} y={barrelY} width="13" height="15" rx="2" />
-          <circle cx={px - 6.5} cy={barrelY + 7.5} r="2.4" />
+          <circle cx={px - 6.5} cy={barrelY + 7.5} r="2.4" fill="#12181f" stroke="none" />
         </g>
       )}
 
-      {/* the PCB plate */}
+      {/* the PCB plate — the board's coloured body */}
       <rect
         className="board-glyph__plate"
         x={px}
@@ -151,8 +174,9 @@ function BoardGlyph({ board }) {
         width={pw}
         height={ph}
         rx="6"
-        stroke="currentColor"
-        strokeWidth="1.6"
+        fill={`url(#${plateFill})`}
+        stroke={c.edge}
+        strokeWidth="1.4"
       />
 
       {/* corner mounting holes */}
@@ -165,12 +189,12 @@ function BoardGlyph({ board }) {
 
       {/* Mega's extra end-header block on the right edge */}
       {f.headers && (
-        <g stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" opacity="0.85">
+        <g stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" opacity="0.9">
           {vComb(9, py + inset, py + ph - inset, px + pw, 7, 1)}
         </g>
       )}
 
-      {/* centre feature: a radio module shield (ESP32) or the outlined MCU */}
+      {/* centre feature: a metal radio shield (ESP32) or the outlined MCU */}
       {f.shield ? (
         <g>
           <rect
@@ -179,12 +203,17 @@ function BoardGlyph({ board }) {
             width="68"
             height={ph - 34}
             rx="2"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
+            fill={`url(#${shieldFill})`}
+            stroke="#6f7a86"
+            strokeWidth="1.2"
           />
+          {/* stamped can seams — the recognisable RF shield texture */}
+          <g stroke="#7c8792" strokeWidth="0.8" opacity="0.8">
+            <line x1={FRAME_W / 2 - 34} y1={py + 18} x2={FRAME_W / 2 + 34} y2={py + 18} />
+            <line x1={FRAME_W / 2 - 22} y1={py + 11} x2={FRAME_W / 2 - 22} y2={py + ph - 23} />
+          </g>
           <text
-            className="board-glyph__label"
+            className="board-glyph__shield-label"
             x={FRAME_W / 2}
             y={py + 11 + (ph - 34) / 2 + 4}
             textAnchor="middle"
@@ -194,7 +223,7 @@ function BoardGlyph({ board }) {
         </g>
       ) : (
         <>
-          <g stroke="currentColor" strokeWidth="1.2">
+          <g stroke="currentColor" strokeWidth="1.2" opacity="0.9">
             {[0, 1, 2, 3, 4].map((i) => {
               const y = icY + 5 + i * ((icH - 10) / 4);
               return (
@@ -206,23 +235,18 @@ function BoardGlyph({ board }) {
             })}
           </g>
           <rect
+            className="board-glyph__chip"
             x={icX}
             y={icY}
             width={icW}
             height={icH}
             rx="2"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
+            stroke="#05101e"
+            strokeWidth="1"
           />
-          <circle
-            cx={icX + 8}
-            cy={icY + 6}
-            r="2.4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.1"
-          />
+          {/* pin-1 dimple */}
+          <circle cx={icX + 8} cy={icY + 6} r="2.2" fill="none" stroke="currentColor"
+            strokeWidth="1" opacity="0.55" />
           <text
             className="board-glyph__label"
             x={FRAME_W / 2}

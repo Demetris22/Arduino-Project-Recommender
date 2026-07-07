@@ -12,8 +12,6 @@ function ResultsControls({
   difficulties,
   onToggleDifficulty,
   onClearDifficulties,
-  view,
-  onView,
 }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -46,28 +44,6 @@ function ResultsControls({
 
   return (
     <div className="results-controls">
-      {onView && (
-        <div className="view-toggle" role="group" aria-label="Buildable layout">
-          <button
-            type="button"
-            className={`view-toggle__btn${view === 'deck' ? ' is-on' : ''}`}
-            aria-pressed={view === 'deck'}
-            onClick={() => onView('deck')}
-          >
-            <Icon name="deck" />
-            <span className="view-toggle__label">Deck</span>
-          </button>
-          <button
-            type="button"
-            className={`view-toggle__btn${view === 'grid' ? ' is-on' : ''}`}
-            aria-pressed={view === 'grid'}
-            onClick={() => onView('grid')}
-          >
-            <Icon name="grid" />
-            <span className="view-toggle__label">Grid</span>
-          </button>
-        </div>
-      )}
       <div className={`rc-search${searchOpen ? ' is-open' : ''}`}>
         <button
           type="button"

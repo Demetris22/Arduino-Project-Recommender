@@ -1,12 +1,43 @@
-// One project, drawn as a spec "plate": a title-block header with a difficulty
-// gauge, a mono meta line (build time + part count), and the concepts it
-// teaches as drawing annotations. Reused across all three result sections; the
-// optional `missing` (near-miss) and `reasons` (incompatible) props drive the
-// extras. When `onOpen` is provided the whole card opens the build detail view.
+// One project, drawn as a datasheet "plate" to match the board cards: a framed
+// drawing well holding the generated parts-schematic (a figure), the title, then
+// an always-on ruled titleblock band (build time · part count · difficulty
+// gauge), and the concepts it teaches as drawing annotations. Reused across all
+// three result sections; the optional `missing` (near-miss) and `reasons`
+// (incompatible) props drive the extras. When `onOpen` is provided the whole
+// card opens the build detail view.
 import { formatTime } from '../lib/format.js';
-import Icon from './Icon.jsx';
-import DifficultyStamp from './DifficultyStamp.jsx';
 import ProjectDiagram from './ProjectDiagram.jsx';
+
+const LEVEL_FILL = { beginner: 1, intermediate: 2, advanced: 3 };
+
+// The ruled titleblock band shared with the board cards: mono label over value.
+// The LEVEL cell carries the three-square difficulty gauge in place of a value.
+function Titleblock({ project, partCount }) {
+  const fill = LEVEL_FILL[project.difficulty] ?? 1;
+  return (
+    <dl className="plate-titleblock">
+      <div className="plate-titleblock__cell">
+        <dt className="mono">TIME</dt>
+        <dd className="mono">{formatTime(project.timeMinutes)}</dd>
+      </div>
+      <div className="plate-titleblock__cell">
+        <dt className="mono">PARTS</dt>
+        <dd className="mono">{partCount || '—'}</dd>
+      </div>
+      <div className={`plate-titleblock__cell is-level is-${project.difficulty}`}>
+        <dt className="mono">LEVEL</dt>
+        <dd>
+          <span className="plate-gauge" aria-hidden="true">
+            {[0, 1, 2].map((i) => (
+              <i key={i} className={i < fill ? 'is-on' : ''} />
+            ))}
+          </span>
+          <span className="sr-only">{project.difficulty}</span>
+        </dd>
+      </div>
+    </dl>
+  );
+}
 
 function ProjectCard({
   project,
@@ -54,24 +85,19 @@ function ProjectCard({
         </span>
       )}
 
-      {view === 'gallery' && <ProjectDiagram project={project} />}
+      {view === 'gallery' && (
+        <div className="project-card__figure">
+          <ProjectDiagram project={project} />
+        </div>
+      )}
 
       <header className="project-card__head">
         <h3 className="project-card__title">{project.title}</h3>
-        <DifficultyStamp level={project.difficulty} />
       </header>
 
-      <p className="project-card__meta">
-        <span className="project-card__metaitem">
-          <Icon name="timer" className="project-card__time-icon" />
-          <span className="mono">{formatTime(project.timeMinutes)}</span>
-        </span>
-        {partCount > 0 && (
-          <span className="project-card__metaitem mono">
-            {partCount} {partCount === 1 ? 'part' : 'parts'}
-          </span>
-        )}
-      </p>
+      {view === 'gallery' && variant !== 'incompatible' && (
+        <Titleblock project={project} partCount={partCount} />
+      )}
 
       {project.learn?.length > 0 && (
         <div className="project-card__concepts">

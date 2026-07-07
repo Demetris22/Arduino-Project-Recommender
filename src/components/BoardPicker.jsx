@@ -1,71 +1,108 @@
 // Single-select board chooser. Exactly one board is always selected.
-// Each board is a little schematic drawing (BoardGlyph) with its datasheet
-// tucked behind a "View details" toggle so the cards stay uncluttered.
-import { useState } from 'react';
+//
+// Each board is laid out as an annotated "plot" on the blueprint sheet — NOT a
+// card. There is no bordered box: the board is a real, muted-colour hardware
+// object resting on the paper (BoardGlyph), framed only by drafting annotations
+// — a sheet ref (BRD-01), a signature-feature callout (USB-C · RF), a ruled
+// mini-titleblock of spec cells, and its name. Selecting a board blooms it to
+// full colour with a cyan backlight + registration bracket. The five distinct
+// coloured objects on the cool field are what keep it from reading generic.
 import BoardGlyph from './BoardGlyph.jsx';
 
-function BoardCard({ board, selected, onSelect }) {
-  const [open, setOpen] = useState(false);
+// A short drafting designation for the plot's ref line, derived from the id:
+// 'uno-r4-wifi' -> 'UNO·R4·WIFI', capped so it never overflows.
+function designation(board) {
+  const raw = String(board.id || board.name || '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, '·')
+    .replace(/^·|·$/g, '');
+  return raw.length > 14 ? `${raw.slice(0, 13)}…` : raw;
+}
+
+// The one signature-feature callout for the plot's top annotation: the physical
+// connector type (what you plug in) + a radio flag when present. This is the
+// per-board detail that makes each plot read differently.
+function featureNote(board) {
+  const s = `${board.name || ''} ${board.id || ''}`;
+  let usb = 'USB-B';
+  if (/nano|micro|mini/i.test(s)) usb = 'MINI-USB';
+  else if (/esp32|esp8266|devkit|nodemcu|wemos|feather|xiao/i.test(s)) usb = 'MICRO-USB';
+  else if (/r4/i.test(s)) usb = 'USB-C';
+  const radio =
+    board.features?.includes('wifi') || board.features?.includes('bluetooth');
+  return radio ? `${usb} · RF` : usb;
+}
+
+// The ruled mini-titleblock: five hairline-divided spec cells with NO box — the
+// datasheet DNA without the container. The net cell flags an on-board radio.
+function SpecLedger({ board, hasRadio }) {
+  const cells = [
+    { key: 'DIG', value: board.digitalPins },
+    { key: 'ANA', value: board.analogPins },
+    { key: 'PWM', value: board.pwmPins },
+    { key: 'LOGIC', value: `${board.logicVoltage}V` },
+  ];
+  return (
+    <dl className="board-specs" aria-hidden="true">
+      {cells.map((cell) => (
+        <div key={cell.key} className="board-specs__cell">
+          <dt className="mono">{cell.key}</dt>
+          <dd className="mono">{cell.value}</dd>
+        </div>
+      ))}
+      <div className={`board-specs__cell is-net${hasRadio ? ' is-on' : ''}`}>
+        <dt className="mono">NET</dt>
+        <dd className="mono">{hasRadio ? 'RF' : '—'}</dd>
+      </div>
+    </dl>
+  );
+}
+
+function BoardPlot({ board, index, selected, onSelect }) {
   const hasWifi = board.features.includes('wifi');
   const hasBt = board.features.includes('bluetooth');
-  const radio = [hasWifi && 'WiFi', hasBt && 'BT'].filter(Boolean).join(' · ');
+  const hasRadio = hasWifi || hasBt;
+  const radio = [hasWifi && 'WiFi', hasBt && 'Bluetooth'].filter(Boolean).join(' · ');
+  const code = designation(board);
+  const ref = `BRD-${String(index + 1).padStart(2, '0')}`;
+
+  // Screen-reader summary of the annotations that are drawn only visually.
+  const specLabel = `${board.digitalPins} digital pins, ${board.analogPins} analog, ${board.pwmPins} PWM, ${board.logicVoltage} volt logic, ${radio || 'no radio'}`;
 
   return (
-    <article
-      className={`board-card${selected ? ' is-selected' : ''}${
-        open ? ' is-open' : ''
-      }`}
-    >
+    <article className={`board-plot${selected ? ' is-selected' : ''}`}>
       <button
         type="button"
-        className="board-card__select"
+        className="board-plot__select"
         aria-pressed={selected}
+        aria-label={`${board.name} — ${specLabel}`}
         onClick={() => onSelect(board.id)}
       >
-        <BoardGlyph board={board} />
-        <span className="board-card__name">{board.name}</span>
-      </button>
-
-      <button
-        type="button"
-        className="board-card__toggle"
-        aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
-      >
-        <span>{open ? 'Hide details' : 'View details'}</span>
-        <span className="board-card__toggle-icon" aria-hidden="true">
-          ▾
+        {/* top annotation row: sheet ref · signature feature · pick mark */}
+        <span className="board-plot__tag" aria-hidden="true">
+          <span className="board-plot__ref mono">{ref}</span>
+          <span className="board-plot__note mono">{featureNote(board)}</span>
+          <span className="board-plot__mark" />
         </span>
-      </button>
 
-      {open && (
-        <dl className="board-spec">
-          <div className="board-spec__cell">
-            <dt>Digital</dt>
-            <dd className="mono">{board.digitalPins}</dd>
-          </div>
-          <div className="board-spec__cell">
-            <dt>Analog</dt>
-            <dd className="mono">{board.analogPins}</dd>
-          </div>
-          <div className="board-spec__cell">
-            <dt>PWM</dt>
-            <dd className="mono">{board.pwmPins}</dd>
-          </div>
-          <div className="board-spec__cell board-spec__cell--v">
-            <dt>Logic</dt>
-            <dd className="mono">{board.logicVoltage}V</dd>
-          </div>
-          <div
-            className={`board-spec__cell board-spec__cell--radio${
-              radio ? '' : ' is-none'
-            }`}
-          >
-            <dt>Radio</dt>
-            <dd className="mono">{radio || 'None'}</dd>
-          </div>
-        </dl>
-      )}
+        {/* the board itself — a coloured object resting on the paper */}
+        <span className="board-plot__object">
+          <span className="board-plot__glow" aria-hidden="true" />
+          <BoardGlyph board={board} />
+        </span>
+
+        <span className="board-plot__id">
+          <span className="board-plot__name">{board.name}</span>
+          <span className="board-plot__code mono" aria-hidden="true">
+            {code}
+          </span>
+        </span>
+
+        <SpecLedger board={board} hasRadio={hasRadio} />
+
+        {/* registration bracket — drafting corners that mark the chosen plot */}
+        <span className="board-plot__bracket" aria-hidden="true" />
+      </button>
     </article>
   );
 }
@@ -73,7 +110,7 @@ function BoardCard({ board, selected, onSelect }) {
 function BoardPicker({ boards, selectedBoardId, onSelect, showTitle = true }) {
   return (
     <section
-      className="panel"
+      className={showTitle ? 'panel board-picker' : 'board-picker'}
       aria-labelledby={showTitle ? 'board-picker-heading' : undefined}
       aria-label={showTitle ? undefined : 'Choose your board'}
     >
@@ -87,10 +124,11 @@ function BoardPicker({ boards, selectedBoardId, onSelect, showTitle = true }) {
       )}
 
       <div className="board-grid" role="group" aria-label="Arduino board">
-        {boards.map((board) => (
-          <BoardCard
+        {boards.map((board, index) => (
+          <BoardPlot
             key={board.id}
             board={board}
+            index={index}
             selected={board.id === selectedBoardId}
             onSelect={onSelect}
           />

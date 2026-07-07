@@ -6,20 +6,14 @@
 // dimension line on the copy, a leader on the CTA) make it read as an annotated
 // drawing rather than a marketing template. The whole sheet draws itself on load.
 import CoverSchematic from './CoverSchematic.jsx';
-import TextType from './TextType.jsx';
 import SpotlightCard from './SpotlightCard.jsx';
 import StarBorder from './StarBorder.jsx';
-
-// The value word after "build" is typed out (TextType), cycling the phrases.
-// Kept to similar lengths so each sits on a single line at the same size.
-const WORDS = ['right now?', 'this weekend?', 'with your kit?', 'tonight?'];
-// The widest phrase reserves the line height so cycling never reflows the title.
-const LONGEST_WORD = WORDS.reduce((a, b) => (b.length > a.length ? b : a));
+import StepGlyph from './StepGlyph.jsx';
 
 const STEPS = [
-  { no: '01', title: 'Pick your board', help: 'Uno, Nano, Mega, ESP32 or Uno R4.' },
-  { no: '02', title: 'Add the parts you own', help: 'LEDs, sensors, motors, displays and more.' },
-  { no: '03', title: 'Get buildable projects', help: 'Flip a deck of builds, each with full instructions.' },
+  { no: '01', glyph: 'board', title: 'Pick your board', help: 'Uno, Nano, Mega, ESP32 or Uno R4.' },
+  { no: '02', glyph: 'parts', title: 'Add the parts you own', help: 'LEDs, sensors, motors, displays and more.' },
+  { no: '03', glyph: 'deck', title: 'Get buildable projects', help: 'The projects you can build now — each with wiring, steps and code.' },
 ];
 
 function LandingPage({ reduceMotion, onStart, onExample }) {
@@ -44,46 +38,13 @@ function LandingPage({ reduceMotion, onStart, onExample }) {
           </div>
 
           <p className="cover__eyebrow mono">Arduino project finder</p>
-          <h1
-            id="cover-title"
-            className="cover__title"
-            aria-label="What can you build with the parts you already own?"
-          >
-            <span className="cover__title-lead" aria-hidden="true">
-              What can you build
-            </span>
-            <span className="cover__type-slot">
-              {/* invisible sizer holds the tallest phrase so the cycling word
-                  never changes the title's height (no reflow / jitter) */}
-              <span className="cover__type-sizer" aria-hidden="true">
-                {LONGEST_WORD}
-              </span>
-              <span className="cover__type-anim">
-                {reduceMotion ? (
-                  <span className="cover__type" aria-hidden="true">
-                    with your kit?
-                  </span>
-                ) : (
-                  <TextType
-                    as="span"
-                    className="cover__type"
-                    text={WORDS}
-                    typingSpeed={70}
-                    deletingSpeed={38}
-                    pauseDuration={1800}
-                    initialDelay={400}
-                    showCursor
-                    cursorCharacter="|"
-                    cursorClassName="cover__type-cursor"
-                    aria-hidden="true"
-                  />
-                )}
-              </span>
-            </span>
+          <h1 id="cover-title" className="cover__title">
+            What can you build{' '}
+            <span className="cover__type">with your kit?</span>
           </h1>
           <p className="cover__sub">
-            Tell Sketchef the board and the parts you already own. It checks them against a catalog
-            of builds and hands you a deck you can actually make — each with wiring, steps and code.
+            Sketchef finds Arduino projects for the exact kit you own — each with wiring, steps and
+            code.
           </p>
 
           <div className="cover__actions">
@@ -96,7 +57,7 @@ function LandingPage({ reduceMotion, onStart, onExample }) {
                 as="button"
                 type="button"
                 className="cover__cta-star"
-                color="rgba(37, 99, 176, 0.9)"
+                color="rgba(133, 228, 245, 0.95)"
                 speed="7s"
                 thickness={2}
                 onClick={onStart}
@@ -129,7 +90,12 @@ function LandingPage({ reduceMotion, onStart, onExample }) {
         {STEPS.map((step) => (
           <li className="cover__step-item" key={step.no}>
             <SpotlightCard className="cover__step">
-              <span className="cover__stepno mono">{step.no}</span>
+              <span className="cover__step-top">
+                <span className="cover__stepno mono">{step.no}</span>
+                <span className="cover__step-glyph" aria-hidden="true">
+                  <StepGlyph name={step.glyph} />
+                </span>
+              </span>
               <span className="cover__steptitle">{step.title}</span>
               <span className="cover__stephelp">{step.help}</span>
             </SpotlightCard>

@@ -1,119 +1,114 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630"
      font-family="'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif">
   <defs>
-    <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
-      <circle cx="1.3" cy="1.3" r="1.3" fill="#6f86a8" fill-opacity="0.16"/>
+    <pattern id="grid" width="26" height="26" patternUnits="userSpaceOnUse">
+      <path d="M26 0 H0 V26" fill="none" stroke="#d2e6ff" stroke-opacity="0.05" stroke-width="1"/>
     </pattern>
-    <radialGradient id="plateGlow" cx="82%" cy="4%" r="70%">
-      <stop offset="0%" stop-color="#2563b0" stop-opacity="0.14"/>
-      <stop offset="100%" stop-color="#2563b0" stop-opacity="0"/>
+    <radialGradient id="cyanGlow" cx="80%" cy="2%" r="70%">
+      <stop offset="0%" stop-color="#5bd0e6" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#5bd0e6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="amberGlow" cx="8%" cy="6%" r="60%">
+      <stop offset="0%" stop-color="#f5a524" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#f5a524" stop-opacity="0"/>
     </radialGradient>
   </defs>
 
-  <!-- drafting table -->
-  <rect width="1200" height="630" fill="#e7ecf3"/>
-  <rect width="1200" height="630" fill="url(#dots)"/>
+  <!-- deep blueprint field -->
+  <rect width="1200" height="630" fill="#07182a"/>
+  <!-- the working sheet, a step lighter, lifted off the field -->
+  <rect x="34" y="30" width="1132" height="570" rx="16" fill="#0d2745" stroke="#b8d4f4" stroke-opacity="0.14" stroke-width="1.5"/>
+  <rect x="34" y="30" width="1132" height="570" rx="16" fill="url(#grid)"/>
+  <rect x="34" y="30" width="1132" height="570" rx="16" fill="url(#cyanGlow)"/>
+  <rect x="34" y="30" width="1132" height="570" rx="16" fill="url(#amberGlow)"/>
 
-  <!-- the drawing sheet, lifted off the table with a double rule -->
-  <rect x="40" y="34" width="1120" height="562" rx="18" fill="#f5f8fc" stroke="#b8c4d6" stroke-width="2"/>
-  <rect x="49" y="43" width="1102" height="544" rx="11" fill="none" stroke="#d3dce8" stroke-width="1.5"/>
-
-  <!-- masthead: mark + wordmark, drawing reference on the right -->
-  <g transform="translate(80,62) scale(0.54)">
-    <rect width="100" height="100" rx="22" fill="#eaeef4"/>
-    <rect x="1.5" y="1.5" width="97" height="97" rx="20.5" fill="none" stroke="#9aabc1" stroke-width="2"/>
-    <g fill="#2563b0">
-      <circle cx="34" cy="44" r="15"/>
-      <circle cx="50" cy="36" r="18"/>
-      <circle cx="66" cy="44" r="15"/>
-      <rect x="30" y="42" width="40" height="22"/>
+  <!-- masthead: solder-pad mark + wordmark -->
+  <g transform="translate(74,54) scale(0.56)">
+    <rect width="100" height="100" rx="22" fill="#12314f"/>
+    <rect x="1.5" y="1.5" width="97" height="97" rx="20.5" fill="none" stroke="#5bd0e6" stroke-opacity="0.5" stroke-width="2"/>
+    <g stroke="#5bd0e6" stroke-width="4.4" stroke-linecap="round" fill="none">
+      <path d="M23 29 L41 41"/>
+      <path d="M59 59 L77 71"/>
     </g>
-    <rect x="28" y="60" width="44" height="14" rx="3" fill="#1e4e8c"/>
-    <rect x="33" y="66" width="34" height="2.4" rx="1.2" fill="#eaeef4"/>
-    <g fill="#c24234">
-      <circle cx="38" cy="67.2" r="2.7"/>
-      <circle cx="50" cy="67.2" r="2.7"/>
-      <circle cx="62" cy="67.2" r="2.7"/>
+    <g fill="#5bd0e6">
+      <circle cx="23" cy="29" r="4.2"/>
+      <circle cx="77" cy="71" r="4.2"/>
     </g>
-    <g stroke="#c24234" stroke-width="2.6" stroke-linecap="round">
-      <line x1="40" y1="74" x2="40" y2="82"/>
-      <line x1="50" y1="74" x2="50" y2="85"/>
-      <line x1="60" y1="74" x2="60" y2="82"/>
-    </g>
-    <g fill="#c24234">
-      <circle cx="40" cy="84" r="2.3"/>
-      <circle cx="50" cy="87" r="2.3"/>
-      <circle cx="60" cy="84" r="2.3"/>
-    </g>
+    <circle cx="50" cy="50" r="13" fill="none" stroke="#5bd0e6" stroke-width="4.6"/>
+    <circle cx="50" cy="50" r="4.6" fill="#eef4fc"/>
   </g>
-  <text x="150" y="90" font-size="33" font-weight="700" fill="#1f2d40" letter-spacing="-0.5">Sketchef</text>
-  <text x="152" y="113" font-size="14" font-weight="600" fill="#7d8ba0" letter-spacing="3"
+  <text x="146" y="84" font-size="33" font-weight="700" fill="#f1f6fd" letter-spacing="-0.5"
+        font-family="ui-monospace, 'Cascadia Code', Consolas, monospace">Sketchef</text>
+  <text x="148" y="107" font-size="13.5" font-weight="700" fill="#f5a524" letter-spacing="3"
         font-family="ui-monospace, 'Cascadia Code', Consolas, monospace">ARDUINO PROJECT FINDER</text>
-  <text x="1120" y="96" text-anchor="end" font-size="15" font-weight="600" fill="#7d8ba0" letter-spacing="2"
+  <text x="1126" y="90" text-anchor="end" font-size="15" font-weight="600" fill="#9cb8dc" letter-spacing="2"
         font-family="ui-monospace, 'Cascadia Code', Consolas, monospace">DWG. 00 · COVER SHEET</text>
-  <line x1="80" y1="140" x2="1120" y2="140" stroke="#b8c4d6" stroke-width="1.5"/>
-  <line x1="80" y1="143.5" x2="1120" y2="143.5" stroke="#d3dce8" stroke-width="1"/>
+  <line x1="74" y1="134" x2="1126" y2="134" stroke="#b8d4f4" stroke-opacity="0.16" stroke-width="1.5"/>
 
-  <!-- headline -->
-  <text x="80" y="252" font-size="70" font-weight="800" fill="#1f2d40" letter-spacing="-2">What can you build</text>
-  <text x="80" y="332" font-size="70" font-weight="800" fill="#2563b0" letter-spacing="-2">right now?</text>
+  <!-- headline (mono display voice) -->
+  <g font-family="ui-monospace, 'Cascadia Code', Consolas, monospace" font-weight="700" letter-spacing="-2.5">
+    <text x="74" y="250" font-size="56" fill="#f1f6fd">What can you build</text>
+    <text x="74" y="322" font-size="56" fill="#f5a524">with your kit?</text>
+  </g>
 
   <!-- subhead -->
-  <text x="82" y="392" font-size="24" fill="#47566b">Pick your Arduino board and the parts you own —</text>
-  <text x="82" y="426" font-size="24" fill="#47566b">get the projects you can actually build: wiring, steps, code.</text>
+  <text x="76" y="398" font-size="23" fill="#c2d6f0">Pick your Arduino board and the parts you own —</text>
+  <text x="76" y="431" font-size="23" fill="#c2d6f0">the projects you can actually build, with wiring, steps, code.</text>
 
   <!-- primary action + catalog readout -->
-  <g transform="translate(82,454)">
-    <rect width="214" height="52" rx="10" fill="#2563b0" stroke="#1e4e8c" stroke-width="1.5"/>
-    <text x="26" y="33" font-size="21" font-weight="700" fill="#eef4fb">Start building &#8594;</text>
+  <g transform="translate(76,460)">
+    <rect width="228" height="54" rx="9" fill="#f5a524"/>
+    <text x="26" y="35" font-size="21" font-weight="700" fill="#241300"
+          font-family="ui-monospace, 'Cascadia Code', Consolas, monospace">Start building &#8594;</text>
   </g>
-  <text x="82" y="548" font-size="17" font-weight="600" fill="#7d8ba0" letter-spacing="1.5"
-        font-family="ui-monospace, 'Cascadia Code', Consolas, monospace">5 BOARDS · 14 COMPONENTS · 20 PROJECTS MAPPED</text>
+  <text x="78" y="560" font-size="16.5" font-weight="600" fill="#9cb8dc" letter-spacing="1.5"
+        font-family="ui-monospace, 'Cascadia Code', Consolas, monospace">5 BOARDS &#183; 14 COMPONENTS &#183; 20 PROJECTS</text>
 
-  <!-- key drawing: FIG. 01 blink an LED, framed as a plate with corner ticks -->
+  <!-- key drawing: FIG. 01 blink an LED, a recessed well with amber corner ticks -->
   <g>
-    <rect x="744" y="168" width="376" height="290" rx="14" fill="#eef3fa" stroke="#9fc0e0" stroke-width="2"/>
-    <rect x="744" y="168" width="376" height="290" rx="14" fill="url(#plateGlow)"/>
-    <g stroke="#2563b0" stroke-width="2.4" fill="none" stroke-linecap="round">
-      <path d="M744 182 v-14 h14"/>
-      <path d="M1106 168 h14 v14"/>
-      <path d="M744 444 v14 h14"/>
-      <path d="M1106 458 h14 v-14"/>
+    <rect x="740" y="158" width="386" height="322" rx="14" fill="#091d34" stroke="#f5a524" stroke-opacity="0.42" stroke-width="1.5"/>
+    <g stroke="#f5a524" stroke-width="2.6" fill="none" stroke-linecap="round">
+      <path d="M740 174 v-16 h16"/>
+      <path d="M1110 158 h16 v16"/>
+      <path d="M740 464 v16 h16"/>
+      <path d="M1110 480 h16 v-16"/>
     </g>
 
-    <g transform="translate(772,196)" fill="none" stroke="#47566b"
-       stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(772,208)" fill="none" stroke="#c2d6f0"
+       stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
       <!-- board edge with two pads -->
-      <rect x="16" y="48" width="18" height="112" rx="2" fill="#f5f8fc"/>
-      <rect x="34" y="60" width="8" height="8" fill="#f5f8fc"/>
-      <rect x="34" y="146" width="8" height="8" fill="#f5f8fc"/>
-      <!-- wires -->
-      <path d="M42 64 H84"/>
-      <path d="M146 64 H196"/>
-      <path d="M226 64 H270 V150 H42"/>
+      <rect x="10" y="52" width="20" height="118" rx="2"/>
+      <rect x="30" y="66" width="8" height="8"/>
+      <rect x="30" y="152" width="8" height="8"/>
+      <!-- wires in cyan -->
+      <g stroke="#5bd0e6">
+        <path d="M38 70 H86"/>
+        <path d="M150 70 H206"/>
+        <path d="M240 70 H286 V158 H38"/>
+      </g>
       <!-- resistor -->
-      <polyline points="84,64 92,56 100,72 108,56 116,72 124,56 132,72 140,56 146,64"/>
-      <!-- LED in drafting blue -->
-      <g stroke="#2563b0" stroke-width="2.4">
-        <path d="M198 52 L198 76 L226 64 Z"/>
-        <path d="M226 52 V76"/>
-        <path d="M208 50 L216 42"/>
-        <path d="M216 42 L211 43 M216 42 L215 47"/>
-        <path d="M214 55 L222 47"/>
-        <path d="M222 47 L217 48 M222 47 L221 52"/>
+      <polyline points="86,70 94,60 102,80 110,60 118,80 126,60 134,80 142,60 150,70" stroke="#c2d6f0"/>
+      <!-- LED in amber -->
+      <g stroke="#f5a524" stroke-width="2.6">
+        <path d="M208 56 L208 84 L240 70 Z"/>
+        <path d="M240 56 V84"/>
+        <path d="M220 54 L229 44"/>
+        <path d="M229 44 L223 45 M229 44 L228 50"/>
+        <path d="M227 60 L236 50"/>
+        <path d="M236 50 L230 51 M236 50 L235 56"/>
       </g>
     </g>
-    <!-- schematic labels -->
-    <g font-size="12" fill="#7d8ba0" letter-spacing="0.5"
+
+    <g font-size="12.5" fill="#9cb8dc" letter-spacing="0.5"
        font-family="ui-monospace, 'Cascadia Code', Consolas, monospace">
-      <text x="824" y="248">D9~</text>
-      <text x="887" y="240" text-anchor="middle">220 &#937;</text>
-      <text x="984" y="286" text-anchor="middle">LED</text>
-      <text x="824" y="360">GND</text>
+      <text x="826" y="262">D9~</text>
+      <text x="905" y="252" text-anchor="middle">220 &#937;</text>
+      <text x="1010" y="300" text-anchor="middle">LED</text>
+      <text x="820" y="382">GND</text>
     </g>
 
-    <line x1="762" y1="420" x2="1102" y2="420" stroke="#c9d6e6" stroke-width="1" stroke-dasharray="4 4"/>
-    <text x="762" y="443" font-size="15" fill="#7d8ba0" letter-spacing="2"
+    <line x1="758" y1="440" x2="1108" y2="440" stroke="#5bd0e6" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 4"/>
+    <text x="758" y="463" font-size="15" fill="#9cb8dc" letter-spacing="2"
           font-family="ui-monospace, 'Cascadia Code', Consolas, monospace">FIG. 01 — BLINK AN LED</text>
   </g>
 </svg>

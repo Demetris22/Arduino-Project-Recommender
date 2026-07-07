@@ -22,7 +22,8 @@ function CompletionMeter({ have, total }) {
 }
 
 function NearMissBoard({ items, onOpen, emptyNode }) {
-  // Collapsed by default so the first glance is just the buildable deck.
+  // Collapsed by default — the buildable projects are the focus; "one or two
+  // parts away" stays a tidy closed bar the user expands on demand.
   const [open, setOpen] = useState(false);
 
   // Closest to buildable first (highest completion, then fewest parts missing).

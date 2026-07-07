@@ -1,5 +1,6 @@
 // Multi-select component picker, grouped by category.
 // Owns no matching logic — just reports the set of owned component ids upward.
+import PartIcon from './PartIcon.jsx';
 
 // Stable display order + friendly labels for the category headings.
 const CATEGORY_ORDER = [
@@ -47,23 +48,24 @@ function ComponentSelector({
 
   return (
     <section
-      className="panel"
+      className={showTitle ? 'panel parts-panel' : 'parts-panel'}
       aria-labelledby={showTitle ? 'component-selector-heading' : undefined}
       aria-label={showTitle ? undefined : 'Choose your components'}
     >
-      <div className="panel__head">
+      <div className="parts-bar">
         {showTitle ? (
           <div>
             <h2 id="component-selector-heading" className="panel__title">
               2 · Parts you own
             </h2>
             <p className="panel__hint">
-              Toggle everything in your kit ({owned.size} selected).
+              Toggle everything in your kit.
             </p>
           </div>
         ) : (
-          <p className="panel__hint panel__hint--count">
-            {owned.size} selected
+          <p className="parts-count mono">
+            <b>{owned.size}</b>
+            <span>selected</span>
           </p>
         )}
         <div className="panel__actions">
@@ -93,9 +95,12 @@ function ComponentSelector({
               <span className="component-group__dot" aria-hidden="true" />
               <span className="component-group__label">
                 {CATEGORY_LABELS[category] ?? category}
+                <span className="component-group__count mono">
+                  {' · '}
+                  {items.length}
+                </span>
               </span>
               <span className="component-group__rule" aria-hidden="true" />
-              <span className="component-group__count mono">{items.length}</span>
             </h3>
             <div className="chip-grid">
               {items.map((component) => {
@@ -108,10 +113,11 @@ function ComponentSelector({
                     className={`chip${isOwned ? ' is-owned' : ''}`}
                     onClick={() => onToggle(component.id)}
                   >
+                    <PartIcon component={component} />
+                    <span className="chip__name">{component.name}</span>
                     <span className="chip__check" aria-hidden="true">
                       {isOwned ? '✓' : '+'}
                     </span>
-                    {component.name}
                   </button>
                 );
               })}

@@ -7,7 +7,7 @@ import { createPortal } from 'react-dom';
 const FOCUSABLE =
   'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
-function Modal({ titleId, onClose, children }) {
+function Modal({ titleId, onClose, children, className = '' }) {
   const dialogRef = useRef(null);
   const previouslyFocused = useRef(null);
 
@@ -91,7 +91,7 @@ function Modal({ titleId, onClose, children }) {
       }}
     >
       <div
-        className="modal"
+        className={`modal${className ? ` ${className}` : ''}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}

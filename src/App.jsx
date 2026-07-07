@@ -12,19 +12,17 @@ import BoardPicker from './components/BoardPicker.jsx';
 import ComponentSelector from './components/ComponentSelector.jsx';
 import ResultsSection from './components/ResultsSection.jsx';
 import ResultsControls from './components/ResultsControls.jsx';
-import ProjectDeck from './components/ProjectDeck.jsx';
+import FeaturedBuild from './components/FeaturedBuild.jsx';
 import EmptyPlate from './components/EmptyPlate.jsx';
 import NearMissBoard from './components/NearMissBoard.jsx';
 import ProjectDetail from './components/ProjectDetail.jsx';
 import ShareButton from './components/ShareButton.jsx';
 import Atmosphere from './components/Atmosphere.jsx';
 import NextPurchase from './components/NextPurchase.jsx';
-import StepIndicator from './components/StepIndicator.jsx';
 import Icon from './components/Icon.jsx';
-import HeroSchematic from './components/HeroSchematic.jsx';
-import TextType from './components/TextType.jsx';
 import LandingPage from './components/LandingPage.jsx';
 import CountUp from './components/CountUp.jsx';
+import RailNav from './components/RailNav.jsx';
 
 const data = { boards, components, projects };
 const DEFAULT_BOARD_ID = boards[0].id;
@@ -82,25 +80,6 @@ function App() {
   const [editing, setEditing] = useState(null);
   // On-demand secondary tools in the results stage.
   const [showNextBuy, setShowNextBuy] = useState(false);
-
-  // How the buildable projects are presented: a flip-through 'deck' (default)
-  // or the scan-everything 'grid'. Remembered across visits.
-  const [buildView, setBuildView] = useState(() => {
-    try {
-      return localStorage.getItem('sketchef:buildView') === 'grid'
-        ? 'grid'
-        : 'deck';
-    } catch {
-      return 'deck';
-    }
-  });
-  useEffect(() => {
-    try {
-      localStorage.setItem('sketchef:buildView', buildView);
-    } catch {
-      // storage unavailable (private mode) — the in-memory state still works.
-    }
-  }, [buildView]);
 
   // One orchestrated page-load reveal: the sheet is "drawn" once on first paint.
   // The staggered CSS is gated on prefers-reduced-motion; this flag only scopes
@@ -202,11 +181,19 @@ function App() {
   const clearComponents = () => setOwnedComponentIds([]);
 
   const selectedBoard = boards.find((b) => b.id === selectedBoardId);
+  // Short form for the narrow rail chip — the redundant "Arduino" prefix wraps
+  // the name onto two lines; the full name still shows on the board cards.
+  const selectedBoardShort = selectedBoard?.name?.replace(/^Arduino\s+/i, '');
 
   // Stage 1: choosing a board advances the flow.
   const chooseBoardAndAdvance = (id) => {
     setSelectedBoardId(id);
     setStage('parts');
+  };
+  // Rail stepper: jump back to a completed step (clears any inline edit).
+  const goToStage = (id) => {
+    setEditing(null);
+    setStage(id);
   };
   // Inline board edit (results stage): change without leaving results.
   const chooseBoardInline = (id) => {
@@ -263,6 +250,14 @@ function App() {
     revealResults();
   };
 
+  // Rail tally rows are shortcuts: click one to jump to that result section.
+  const scrollToResults = (id) => {
+    document.getElementById(id)?.scrollIntoView({
+      behavior: reduceMotion ? 'auto' : 'smooth',
+      block: 'start',
+    });
+  };
+
   // True once the parts list differs from what it was when the editor opened.
   const partsChanged =
     editing === 'parts' &&
@@ -270,79 +265,123 @@ function App() {
       ownedComponentIds.some((id) => !partsSnapshot.current.includes(id)));
 
   return (
-    <div className={`app${intro ? ' is-intro' : ''}`} data-stage={stage}>
+    <div className={`app-shell${intro ? ' is-intro' : ''}`} data-stage={stage}>
       <a className="skip-link" href="#main">Skip to content</a>
       <Atmosphere />
 
       {stage !== 'landing' && (
-      <header className="hero">
-        <div className="hero__main">
-        <div className="hero__brand">
-          <img
-            className="hero__logo"
-            src="/favicon.svg"
-            alt=""
-            width="36"
-            height="36"
-          />
-          <span className="hero__brandname">Sketchef</span>
-        </div>
-        <h1 className="hero__title">
-          {!reduceMotion ? (
-            <>
-              <span className="hero__title-lead">What can you build</span>
-              <TextType
-                as="span"
-                className="hero__type"
-                text={[
-                  'right now?',
-                  'this weekend?',
-                  'with what you own?',
-                  'tonight?',
-                ]}
-                typingSpeed={68}
-                deletingSpeed={38}
-                pauseDuration={1900}
-                initialDelay={350}
-                showCursor
-                cursorCharacter="|"
-                cursorClassName="hero__type-cursor"
-              />
-            </>
-          ) : (
-            <>
-              What can you build <span className="hero__accent">right now?</span>
-            </>
+        <RailNav
+          stage={stage}
+          onNavigate={goToStage}
+          stats={{
+            boards: boards.length,
+            components: components.length,
+            projects: projects.length,
+          }}
+        >
+          {stage === 'board' && (
+            <div className="railctx">
+              <p className="railctx__note">
+                New here? Load a ready-made kit to see how it works.{' '}
+                <button type="button" className="link-btn" onClick={loadExample}>
+                  Try an example →
+                </button>
+              </p>
+            </div>
           )}
-        </h1>
-        {stage !== 'results' && (
-          <p className="hero__lede">
-            Tell it your board and the parts you own. Get projects you can
-            actually build, one step at a time.
-          </p>
-        )}
-        {stage === 'results' && (
-          <dl className="hero__stats">
-            <div className="hero__stat">
-              <dt>boards</dt>
-              <dd className="mono">{boards.length}</dd>
+
+          {stage === 'parts' && (
+            <div className="railctx">
+              <button
+                type="button"
+                className="summary-chip summary-chip--block"
+                onClick={() => setStage('board')}
+              >
+                <span className="summary-chip__label">Board</span>
+                <span className="summary-chip__value">{selectedBoardShort}</span>
+                <span className="summary-chip__edit">Change</span>
+              </button>
+              <div className="railctx__cta">
+                <button
+                  type="button"
+                  className={`primary-btn primary-btn--block${
+                    ownedComponentIds.length === 0 ? ' primary-btn--pending' : ''
+                  }`}
+                  onClick={() => setStage('results')}
+                >
+                  Show what I can build →
+                </button>
+              </div>
             </div>
-            <div className="hero__stat">
-              <dt>components</dt>
-              <dd className="mono">{components.length}</dd>
+          )}
+
+          {stage === 'results' && (
+            <div className="railctx">
+              <div className="results__summary">
+                <button
+                  type="button"
+                  className={`summary-chip summary-chip--block${editing === 'board' ? ' is-editing' : ''}`}
+                  aria-expanded={editing === 'board'}
+                  onClick={() => editStep('board')}
+                >
+                  <span className="summary-chip__label">Board</span>
+                  <span className="summary-chip__value">{selectedBoardShort}</span>
+                  <span className="summary-chip__edit">Edit</span>
+                </button>
+                <button
+                  type="button"
+                  className={`summary-chip summary-chip--block${editing === 'parts' ? ' is-editing' : ''}`}
+                  aria-expanded={editing === 'parts'}
+                  onClick={() => editStep('parts')}
+                >
+                  <span className="summary-chip__label">Parts</span>
+                  <span className="summary-chip__value mono">
+                    {ownedComponentIds.length} selected
+                  </span>
+                  <span className="summary-chip__edit">Edit</span>
+                </button>
+              </div>
+              <div className="results__tally">
+                <button
+                  type="button"
+                  className="results__tally-cell is-build"
+                  onClick={() => scrollToResults('results-buildable')}
+                >
+                  <span className="results__tally-label">Buildable</span>
+                  <span className="results__tally-num mono">
+                    {filtered.buildable.length}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className="results__tally-cell is-near"
+                  onClick={() => scrollToResults('results-near')}
+                >
+                  <span className="results__tally-label">Near-miss</span>
+                  <span className="results__tally-num mono">
+                    {filtered.nearMiss.length}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className="results__tally-cell is-out"
+                  onClick={() => scrollToResults('results-out')}
+                >
+                  <span className="results__tally-label">Ruled out</span>
+                  <span className="results__tally-num mono">
+                    {filtered.incompatible.length}
+                  </span>
+                </button>
+              </div>
+              <div className="railctx__share">
+                <ShareButton />
+              </div>
             </div>
-            <div className="hero__stat">
-              <dt>projects</dt>
-              <dd className="mono">{projects.length}</dd>
-            </div>
-          </dl>
-        )}
-        </div>
-        <HeroSchematic />
-      </header>
+          )}
+        </RailNav>
       )}
 
-      <main className="flow" id="main">
+      <main className="canvas" id="main">
         <AnimatePresence mode="wait" initial={false}>
         {/* ---------- Stage 0: landing / cover sheet ---------- */}
         {stage === 'landing' && (
@@ -362,53 +401,33 @@ function App() {
         {/* ---------- Stage 1: choose your board ---------- */}
         {stage === 'board' && (
           <motion.section className="stage" {...stageMotion} key="stage-board">
-            <StepIndicator current={1} />
-            <div className="step-head">
+            <header className="stage-head">
               <p className="step-head__eyebrow">Choose your Arduino</p>
               <h2 className="step-head__title">Which board are you using?</h2>
               <p className="step-head__help">
-                Pick the board you're building with.
+                Pick the board you're building with — each card opens its
+                datasheet.
               </p>
-            </div>
+            </header>
             <BoardPicker
               boards={boards}
               selectedBoardId={selectedBoardId}
               onSelect={chooseBoardAndAdvance}
               showTitle={false}
             />
-
-            <p className="stage__example">
-              Just exploring?{' '}
-              <button type="button" className="link-btn" onClick={loadExample}>
-                Try an example →
-              </button>
-            </p>
           </motion.section>
         )}
 
         {/* ---------- Stage 2: pick your parts ---------- */}
         {stage === 'parts' && (
           <motion.section className="stage" {...stageMotion} key="stage-parts">
-            <StepIndicator current={2} />
-
-            <button
-              type="button"
-              className="summary-chip"
-              onClick={() => setStage('board')}
-            >
-              <span className="summary-chip__label">Board</span>
-              <span className="summary-chip__value">{selectedBoard?.name}</span>
-              <span className="summary-chip__edit">Change</span>
-            </button>
-
-            <div className="step-head">
+            <header className="stage-head">
               <p className="step-head__eyebrow">Choose your components</p>
               <h2 className="step-head__title">Which parts do you own?</h2>
               <p className="step-head__help">
                 Toggle the parts you have in your kit.
               </p>
-            </div>
-
+            </header>
             <ComponentSelector
               components={components}
               ownedIds={ownedComponentIds}
@@ -417,11 +436,14 @@ function App() {
               onClear={clearComponents}
               showTitle={false}
             />
-
-            <div className="stage__actions">
+            {/* mobile-only action bar (rail context is hidden on narrow screens) */}
+            <div className="stage-actions stage-actions--mobile">
+              <p className="railctx__count mono">
+                <b>{ownedComponentIds.length}</b> selected
+              </p>
               <button
                 type="button"
-                className="primary-btn"
+                className="primary-btn primary-btn--block"
                 onClick={() => setStage('results')}
               >
                 Show what I can build →
@@ -433,33 +455,6 @@ function App() {
         {/* ---------- Stage 3: results ---------- */}
         {stage === 'results' && (
           <motion.section className="stage" {...stageMotion} key="stage-results">
-            <div className="summary-bar">
-              <button
-                type="button"
-                className={`summary-chip${editing === 'board' ? ' is-editing' : ''}`}
-                aria-expanded={editing === 'board'}
-                onClick={() => editStep('board')}
-              >
-                <span className="summary-chip__label">Board</span>
-                <span className="summary-chip__value">{selectedBoard?.name}</span>
-                <span className="summary-chip__edit">Edit</span>
-              </button>
-              <button
-                type="button"
-                className={`summary-chip${editing === 'parts' ? ' is-editing' : ''}`}
-                aria-expanded={editing === 'parts'}
-                onClick={() => editStep('parts')}
-              >
-                <span className="summary-chip__label">Parts</span>
-                <span className="summary-chip__value mono">
-                  {ownedComponentIds.length} selected
-                </span>
-                <span className="summary-chip__edit">Edit</span>
-              </button>
-              <div className="summary-bar__spacer" />
-              <ShareButton />
-            </div>
-
             {editing === 'board' && (
               <div className="inline-editor" key="edit-board">
                 <BoardPicker
@@ -514,8 +509,6 @@ function App() {
                   difficulties={difficultyFilters}
                   onToggleDifficulty={toggleDifficulty}
                   onClearDifficulties={clearDifficulties}
-                  view={buildView}
-                  onView={hasBuildable ? setBuildView : undefined}
                 />
               </div>
 
@@ -554,12 +547,28 @@ function App() {
                 </div>
               ) : (
                 <>
+                  <div id="results-buildable">
                   {hasBuildable ? (
-                    buildView === 'deck' ? (
-                      <ProjectDeck
-                        items={filtered.buildable}
-                        onOpen={setActiveProject}
-                      />
+                    filtered.buildable.length >= 3 ? (
+                      // hero + supporting grid: the recommended build anchors the
+                      // composition (fills the canvas, sets the size hierarchy),
+                      // the rest follow beneath it
+                      <div className="buildable-layout">
+                        <FeaturedBuild
+                          project={filtered.buildable[0]}
+                          onOpen={setActiveProject}
+                        />
+                        <ResultsSection
+                          id="buildable"
+                          view="gallery"
+                          title="More you can build"
+                          subtitle="You own every part and your board can run it."
+                          items={filtered.buildable.slice(1)}
+                          variant="buildable"
+                          tone="buildable"
+                          onOpen={setActiveProject}
+                        />
+                      </div>
                     ) : (
                       <ResultsSection
                         id="buildable"
@@ -591,35 +600,40 @@ function App() {
                       onOpen={setActiveProject}
                     />
                   )}
+                  </div>
 
-                  <NearMissBoard
-                    items={filtered.nearMiss}
-                    onOpen={setActiveProject}
-                    emptyNode={
-                      <EmptyPlate stamp="No pending drawings">
-                        {filtersActive
-                          ? 'No near-misses match your filters.'
-                          : 'You own every part for the builds above — nothing waiting on one more component.'}
-                      </EmptyPlate>
-                    }
-                  />
-                  <ResultsSection
-                    id="incompatible"
-                    view="gallery"
-                    title="Not compatible with this board"
-                    subtitle={`Ruled out by the ${selectedBoard.name}.`}
-                    items={filtered.incompatible}
-                    variant="incompatible"
-                    tone="muted"
-                    collapsible
-                    emptyNode={
-                      <EmptyPlate stamp="All in spec">
-                        {filtersActive
-                          ? 'No incompatible projects match your filters.'
-                          : `Every project in the catalog runs on the ${selectedBoard.name}.`}
-                      </EmptyPlate>
-                    }
-                  />
+                  <div id="results-near">
+                    <NearMissBoard
+                      items={filtered.nearMiss}
+                      onOpen={setActiveProject}
+                      emptyNode={
+                        <EmptyPlate stamp="No pending drawings">
+                          {filtersActive
+                            ? 'No near-misses match your filters.'
+                            : 'You own every part for the builds above — nothing waiting on one more component.'}
+                        </EmptyPlate>
+                      }
+                    />
+                  </div>
+                  <div id="results-out">
+                    <ResultsSection
+                      id="incompatible"
+                      view="gallery"
+                      title="Not compatible with this board"
+                      subtitle={`Ruled out by the ${selectedBoard.name}.`}
+                      items={filtered.incompatible}
+                      variant="incompatible"
+                      tone="muted"
+                      collapsible
+                      emptyNode={
+                        <EmptyPlate stamp="All in spec">
+                          {filtersActive
+                            ? 'No incompatible projects match your filters.'
+                            : `Every project in the catalog runs on the ${selectedBoard.name}.`}
+                        </EmptyPlate>
+                      }
+                    />
+                  </div>
                 </>
               )}
             </div>
@@ -628,6 +642,7 @@ function App() {
         </AnimatePresence>
       </main>
 
+      {stage === 'landing' && (
       <footer className="titleblock">
         <div className="titleblock__head">
           <div>
@@ -694,6 +709,7 @@ function App() {
           </a>
         </div>
       </footer>
+      )}
 
       {activeProject && (
         <ProjectDetail

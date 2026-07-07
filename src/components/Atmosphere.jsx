@@ -5,6 +5,7 @@
 // the global reduced-motion rule.
 import { useEffect, useRef, useState } from 'react';
 import DotField from './DotField.jsx';
+import TableDraft from './TableDraft.jsx';
 
 function Atmosphere() {
   const ref = useRef(null);
@@ -54,6 +55,8 @@ function Atmosphere() {
 
   return (
     <div className="atmosphere" ref={ref} aria-hidden="true">
+      <div className="atmosphere__light" />
+      <TableDraft />
       <div className="atmosphere__base" />
       <div className="atmosphere__aurora" />
       <div className="atmosphere__cursor" />
@@ -66,12 +69,14 @@ function Atmosphere() {
             glowRadius={150}
             sparkle={false}
             waveAmplitude={0}
-            gradientFrom="rgba(37, 99, 176, 0.30)"
-            gradientTo="rgba(37, 99, 176, 0.12)"
-            glowColor="rgba(37, 99, 176, 0.12)"
+            gradientFrom="rgba(91, 208, 230, 0.34)"
+            gradientTo="rgba(91, 208, 230, 0.12)"
+            glowColor="rgba(91, 208, 230, 0.16)"
           />
         </div>
       )}
+      <div className="atmosphere__grain" />
+      <div className="atmosphere__vignette" />
     </div>
   );
 }

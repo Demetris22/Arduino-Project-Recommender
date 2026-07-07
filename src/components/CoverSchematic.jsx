@@ -1,19 +1,18 @@
-// CoverSchematic — the key drawing on the cover sheet. Each figure inks itself in
-// (SVG stroke draw via motion's pathLength) and the plate cycles through a few
-// builds — Blink an LED → Ultrasonic parking sensor → Servo sweep — with the FIG
-// caption tracking along, to show the range of what Sketchef finds. Under
-// prefers-reduced-motion it renders one finished figure and does not cycle.
-// Decorative (aria-hidden); the real projects live in the results flow.
+// CoverSchematic — the key drawing on the cover sheet: a "complete kit" diagram
+// (an Arduino Uno wired on a breadboard to an ultrasonic sensor, an LED and a
+// servo) that inks itself in on load via motion's pathLength, then re-plots on a
+// calm loop. Under prefers-reduced-motion it renders the finished diagram and
+// doesn't animate. Decorative (aria-hidden); the real projects live in results.
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 
-// Strokes ink themselves in along their own length; plates/labels/details fade.
+// Strokes ink themselves in along their own length; substrates/labels fade.
 const DRAW = {
   hidden: { pathLength: 0, opacity: 0 },
   visible: {
     pathLength: 1,
     opacity: 1,
-    transition: { pathLength: { duration: 0.85, ease: [0.65, 0, 0.35, 1] }, opacity: { duration: 0.15 } },
+    transition: { pathLength: { duration: 0.7, ease: [0.65, 0, 0.35, 1] }, opacity: { duration: 0.12 } },
   },
 };
 const FADE = {
@@ -22,138 +21,114 @@ const FADE = {
 };
 const CONTAINER = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.075, delayChildren: 0.1 } },
+  visible: { transition: { staggerChildren: 0.028, delayChildren: 0.08 } },
 };
 
-// The board edge motif shared by every figure: a rail on the left with two pads,
-// the signal leaving the top pad (~48,62) and the return meeting the lower (~48,122).
-const BOARD = [
-  { x: 22, y: 44, width: 18, height: 96, rx: 3 },
-  { x: 40, y: 58, width: 8, height: 8 },
-  { x: 40, y: 118, width: 8, height: 8 },
-];
-
-const FIGURES = [
-  {
-    caption: 'FIG. 01 — BLINK AN LED',
-    plates: BOARD,
-    strokes: [
-      { t: 'path', d: 'M48 62 H96' },
-      { t: 'polyline', points: '96,62 104,54 112,70 120,54 128,70 136,54 144,70 150,62' },
-      { t: 'path', d: 'M150 62 H196' },
-      { t: 'path', d: 'M196 50 V74 L224 62 Z', className: 'cover-schem__accent' },
-      { t: 'path', d: 'M224 50 V74', className: 'cover-schem__accent' },
-      { t: 'path', d: 'M206 46 l8 -8 M214 38 l-5 1 M214 38 l1 5', className: 'cover-schem__accent' },
-      { t: 'path', d: 'M214 52 l8 -8 M222 44 l-5 1 M222 44 l1 5', className: 'cover-schem__accent' },
-      { t: 'path', d: 'M224 62 H286 V150 H48 V122' },
-    ],
-    labels: [
-      { x: 52, y: 54, text: 'D9~' },
-      { x: 123, y: 46, text: '220 Ω', anchor: 'middle' },
-      { x: 210, y: 90, text: 'LED', anchor: 'middle' },
-      { x: 52, y: 138, text: 'GND' },
-    ],
-  },
-  {
-    caption: 'FIG. 02 — ULTRASONIC PARKING SENSOR',
-    plates: [...BOARD, { x: 196, y: 44, width: 96, height: 52, rx: 5 }],
-    strokes: [
-      { t: 'path', d: 'M48 62 H150 V54 H196' },
-      { t: 'path', d: 'M48 122 H150 V86 H196' },
-      { t: 'circle', cx: 222, cy: 70, r: 13 },
-      { t: 'circle', cx: 266, cy: 70, r: 13 },
-      { t: 'circle', cx: 222, cy: 70, r: 3.5 },
-      { t: 'circle', cx: 266, cy: 70, r: 3.5 },
-      { t: 'path', d: 'M300 52 A 26 26 0 0 1 300 88', className: 'cover-schem__accent' },
-      { t: 'path', d: 'M308 44 A 38 38 0 0 1 308 96', className: 'cover-schem__accent' },
-      { t: 'path', d: 'M316 36 A 50 50 0 0 1 316 104', className: 'cover-schem__accent' },
-    ],
-    labels: [
-      { x: 244, y: 36, text: 'HC-SR04', anchor: 'middle' },
-      { x: 92, y: 54, text: 'TRIG' },
-      { x: 92, y: 114, text: 'ECHO' },
-    ],
-  },
-  {
-    caption: 'FIG. 03 — SERVO SWEEP',
-    plates: [...BOARD, { x: 200, y: 74, width: 74, height: 46, rx: 5 }],
-    strokes: [
-      { t: 'path', d: 'M48 62 H150 V97 H200' },
-      { t: 'circle', cx: 237, cy: 66, r: 10 },
-      { t: 'circle', cx: 237, cy: 66, r: 2.5 },
-      { t: 'path', d: 'M237 66 L270 48', className: 'cover-schem__accent' },
-      { t: 'path', d: 'M205 66 v6 M269 66 v6', className: 'cover-schem__accent' },
-    ],
-    details: [
-      { t: 'path', d: 'M205 66 A 32 32 0 0 1 269 66', className: 'cover-schem__accent cover-schem__sweep' },
-    ],
-    labels: [
-      { x: 237, y: 30, text: '0–180°', anchor: 'middle' },
-      { x: 92, y: 54, text: 'D9~' },
-      { x: 237, y: 136, text: 'SERVO', anchor: 'middle' },
-    ],
-  },
-];
-
-function plateEl(p, key, animate) {
-  return animate ? (
-    <motion.rect key={key} className="cover-schem__plate" variants={FADE} {...p} />
-  ) : (
-    <rect key={key} className="cover-schem__plate" {...p} />
-  );
+// A row of evenly spaced pin ticks, as one path (draws in one stroke).
+function ticks(x0, y0, n, gap, len) {
+  let d = '';
+  for (let i = 0; i < n; i += 1) d += `M${(x0 + i * gap).toFixed(1)} ${y0} v${len} `;
+  return d.trim();
 }
 
-function strokeEl(s, key, animate, variant) {
-  const { t, className, ...attrs } = s;
-  if (animate) {
-    const MC = motion[t];
-    return <MC key={key} className={className} variants={variant} fill="none" {...attrs} />;
-  }
-  const Tag = t;
-  return <Tag key={key} className={className} fill="none" {...attrs} />;
-}
+// The whole kit. `animate` swaps motion elements (with draw/fade variants,
+// orchestrated by the parent) for plain ones (rendered fully drawn).
+function KitFigure({ animate }) {
+  const P = animate ? motion.path : 'path';
+  const R = animate ? motion.rect : 'rect';
+  const C = animate ? motion.circle : 'circle';
+  const T = animate ? motion.text : 'text';
+  const draw = animate ? { variants: DRAW } : {};
+  const fade = animate ? { variants: FADE } : {};
+  const lbl = { className: 'cover-schem__label' };
 
-function labelEl(l, key, animate) {
-  const props = { className: 'cover-schem__label', x: l.x, y: l.y, textAnchor: l.anchor || 'start' };
-  return animate ? (
-    <motion.text key={key} variants={FADE} {...props}>
-      {l.text}
-    </motion.text>
-  ) : (
-    <text key={key} {...props}>
-      {l.text}
-    </text>
-  );
-}
-
-function FigureContent({ fig, animate }) {
   return (
     <>
-      {(fig.plates || []).map((p, i) => plateEl(p, `p${i}`, animate))}
-      {(fig.details || []).map((d, i) => strokeEl(d, `d${i}`, animate, FADE))}
-      {(fig.strokes || []).map((s, i) => strokeEl(s, `s${i}`, animate, DRAW))}
-      {(fig.labels || []).map((l, i) => labelEl(l, `l${i}`, animate))}
+      {/* substrates fade in first, then the wiring inks onto them */}
+      <R {...fade} className="cover-schem__plate" x="14" y="104" width="178" height="118" rx="7" />
+      <R {...fade} className="cover-schem__plate" x="206" y="120" width="148" height="96" rx="5" />
+      <R {...fade} className="cover-schem__plate" x="212" y="18" width="90" height="50" rx="5" />
+      <R {...fade} className="cover-schem__plate" x="362" y="116" width="58" height="54" rx="4" />
+
+      {/* breadboard hole field */}
+      <R {...fade} x="213" y="126" width="134" height="36" fill="url(#bbdots)" stroke="none" />
+      <R {...fade} x="213" y="176" width="134" height="34" fill="url(#bbdots)" stroke="none" />
+
+      {/* ---------- Arduino Uno ---------- */}
+      <P {...draw} d="M2 120 h14 v26 h-14 z" />
+      <P {...draw} d="M4 125 h8 v16 h-8" />
+      <P {...draw} d="M2 158 h14 v20 h-14 z" />
+      <C {...draw} cx="9" cy="168" r="4" />
+      <P {...draw} d="M42 110 h140 v9 h-140 z" />
+      <P {...draw} d={ticks(49, 110, 18, 7.4, 9)} />
+      <P {...draw} d="M46 205 h128 v9 h-128 z" />
+      <P {...draw} d={ticks(53, 205, 16, 7.4, 9)} />
+      <P {...draw} d="M66 150 h58 v34 h-58 z" />
+      <C {...draw} cx="70" cy="167" r="3" />
+      <P
+        {...draw}
+        d="M66 156 h-4 M66 164 h-4 M66 172 h-4 M66 179 h-4 M124 156 h4 M124 164 h4 M124 172 h4 M124 179 h4"
+      />
+      <C {...draw} cx="176" cy="127" r="4" />
+      <C {...draw} cx="26" cy="115" r="3" />
+      <C {...draw} cx="180" cy="115" r="3" />
+      <C {...draw} cx="26" cy="211" r="3" />
+      <C {...draw} cx="180" cy="211" r="3" />
+      <T {...fade} {...lbl} x="150" y="164" textAnchor="middle">ARDUINO</T>
+      <T {...fade} className="cover-schem__label cover-schem__label--lg" x="150" y="180" textAnchor="middle">
+        UNO
+      </T>
+
+      {/* breadboard trench */}
+      <P {...draw} d="M210 166 h140 M210 172 h140" />
+
+      {/* ---------- HC-SR04 ultrasonic ---------- */}
+      <C {...draw} cx="238" cy="44" r="17" />
+      <C {...draw} cx="238" cy="44" r="6" />
+      <C {...draw} cx="278" cy="44" r="17" />
+      <C {...draw} cx="278" cy="44" r="6" />
+      <P {...draw} d={ticks(230, 68, 4, 9, 6)} />
+      <T {...fade} {...lbl} x="257" y="13" textAnchor="middle">HC-SR04</T>
+
+      {/* ---------- LED (accent) ---------- */}
+      <P {...draw} className="cover-schem__accent" d="M326 50 v-6 q0 -13 10 -13 q10 0 10 13 v6 z" />
+      <P {...draw} className="cover-schem__accent" d="M324 50 h24" />
+      <P {...draw} className="cover-schem__accent" d="M330 50 v14 M342 50 v14" />
+      <T {...fade} {...lbl} x="336" y="78" textAnchor="middle">LED</T>
+
+      {/* ---------- Servo ---------- */}
+      <P {...draw} d="M354 126 h8 v10 h-8 M428 126 h-8 v10 h8" />
+      <C {...draw} cx="380" cy="112" r="9" />
+      <C {...draw} cx="380" cy="112" r="2" />
+      <P {...draw} className="cover-schem__accent" d="M380 112 v-14" />
+      <T {...fade} {...lbl} x="391" y="150" textAnchor="middle">SERVO</T>
+
+      {/* ---------- jumper wires (accent) ---------- */}
+      <P {...draw} className="cover-schem__accent" d="M182 114 C198 108 202 130 212 135" />
+      <P {...draw} className="cover-schem__accent" d="M258 126 C256 102 258 86 258 68" />
+      <P {...draw} className="cover-schem__accent" d="M322 132 C332 112 336 92 336 64" />
+      <P {...draw} className="cover-schem__accent" d="M354 156 C374 156 372 150 362 150" />
+      <P {...draw} className="cover-schem__accent" d="M174 212 C192 216 200 200 212 198" />
     </>
   );
 }
 
 function CoverSchematic() {
   const reduce = useReducedMotion();
-  const [index, setIndex] = useState(0);
+  const [pass, setPass] = useState(0);
 
+  // Re-plot the diagram on a calm loop so the self-drawing "effect" recurs.
   useEffect(() => {
-    if (reduce || FIGURES.length <= 1) return undefined;
-    const id = setInterval(() => setIndex((i) => (i + 1) % FIGURES.length), 4600);
+    if (reduce) return undefined;
+    const id = setInterval(() => setPass((p) => p + 1), 11000);
     return () => clearInterval(id);
   }, [reduce]);
-
-  const fig = FIGURES[reduce ? 0 : index];
 
   return (
     <div className="cover-schem">
       <svg
         className="cover-schem__svg"
-        viewBox="0 0 320 180"
+        viewBox="0 0 430 240"
         fill="none"
         stroke="currentColor"
         strokeWidth="1.7"
@@ -162,41 +137,33 @@ function CoverSchematic() {
         aria-hidden="true"
         focusable="false"
       >
+        <defs>
+          <pattern id="bbdots" width="9" height="9" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1" fill="currentColor" stroke="none" opacity="0.28" />
+          </pattern>
+        </defs>
+
         {reduce ? (
           <g>
-            <FigureContent fig={fig} animate={false} />
+            <KitFigure animate={false} />
           </g>
         ) : (
           <AnimatePresence mode="wait">
             <motion.g
-              key={index}
+              key={pass}
               variants={CONTAINER}
               initial="hidden"
               animate="visible"
-              exit={{ opacity: 0, transition: { duration: 0.3 } }}
+              exit={{ opacity: 0, transition: { duration: 0.4 } }}
             >
-              <FigureContent fig={fig} animate />
+              <KitFigure animate />
             </motion.g>
           </AnimatePresence>
         )}
       </svg>
 
       <p className="cover__figcaption mono" aria-hidden="true">
-        {reduce ? (
-          FIGURES[0].caption
-        ) : (
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={index}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              {fig.caption}
-            </motion.span>
-          </AnimatePresence>
-        )}
+        FIG. 01 — COMPLETE KIT DIAGRAM
       </p>
     </div>
   );

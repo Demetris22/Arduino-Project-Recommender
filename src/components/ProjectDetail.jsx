@@ -49,9 +49,12 @@ function ProjectDetail({ project, components, onClose }) {
   };
 
   return (
-    <Modal titleId={titleId} onClose={onClose}>
+    <Modal titleId={titleId} onClose={onClose} className="modal--blueprint">
       <header className="detail__head">
         <div className="detail__head-main">
+          <p className="detail__ref mono" aria-hidden="true">
+            <span className="detail__ref-dot" /> BUILD SHEET · {project.id}
+          </p>
           <h2 id={titleId} className="detail__title">
             {project.title}
           </h2>

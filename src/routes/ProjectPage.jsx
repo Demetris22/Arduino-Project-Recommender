@@ -12,6 +12,8 @@ import { boardIncompatibilities } from '../data/lib/matching.js';
 import { useKit } from '../kit/KitContext.jsx';
 import { useProjectStatus } from '../kit/useProjectStatus.js';
 import ProjectDiagram from '../components/ProjectDiagram.jsx';
+import Breadboard from '../components/Breadboard.jsx';
+import BREADBOARDS from '../data/breadboards.js';
 import PartIcon from '../components/PartIcon.jsx';
 import StatusBadge from '../components/StatusBadge.jsx';
 import NotFoundPage from './NotFoundPage.jsx';
@@ -166,6 +168,7 @@ function ProjectPage() {
   const status = statusById.get(project.id);
   const board = boards.find((b) => b.id === boardId);
   const reasons = board ? boardIncompatibilities(project, board) : [];
+  const breadboard = BREADBOARDS[project.id];
 
   return (
     <article className="projectpage">
@@ -215,6 +218,17 @@ function ProjectPage() {
         <div className="projectbody">
           <section className="projectbody__main">
             <h2 className="blockhead">Wiring</h2>
+            {breadboard && (
+              <figure className="bbfig">
+                <div className="bbfig__tile">
+                  <span className="bbfig__tag mono">Breadboard layout</span>
+                  <Breadboard spec={breadboard} />
+                </div>
+                <figcaption className="bbfig__cap mono">
+                  Colour-coded jumpers — follow the connection list below to build it.
+                </figcaption>
+              </figure>
+            )}
             <ul className="wiring">
               {project.wiring.map((line) => {
                 const [from, to] = line.split('→');

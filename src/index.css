@@ -1556,6 +1556,41 @@ a { color: var(--teal-deep); }
   color: var(--teal-bright);
 }
 
+/* breadboard wiring figure — a coloured build view on a teal-ink tile */
+.bbfig { margin: 0 0 clamp(1.4rem, 3vw, 2.2rem); }
+.bbfig__tile {
+  position: relative;
+  padding: clamp(1.4rem, 3vw, 2rem) clamp(0.8rem, 2.5vw, 1.6rem) clamp(0.7rem, 2vw, 1rem);
+  background: var(--teal-ink);
+  border-radius: var(--r-lg);
+  box-shadow: var(--lift-2);
+  overflow: hidden;
+}
+.bbfig__tag {
+  position: absolute;
+  left: 1.1rem; top: 0.9rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(159, 188, 189, 0.8);
+  z-index: 1;
+}
+.breadboard { display: block; width: 100%; height: auto; }
+.bbfig__cap {
+  margin: 0.7rem 0 0;
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+}
+/* text baked into the breadboard SVG */
+.bb-ard-title { fill: #bfeceb; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; }
+.bb-ard-pin { fill: #d7e6e6; font-family: var(--font-mono); font-size: 10px; font-weight: 600; }
+.bb-module-name { fill: #eaf6f6; font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.04em; }
+.bb-pin-label { fill: #cfe0e0; font-family: var(--font-mono); font-size: 7.5px; font-weight: 600; }
+.bb-part-label { fill: #4a3a1e; font-family: var(--font-mono); font-size: 9px; font-weight: 700; }
+.bb-plus { fill: #dbe1e7; font-family: var(--font-mono); font-size: 11px; font-weight: 700; }
+.bb-leg { stroke: #9aa0a8; stroke-width: 2; stroke-linecap: round; }
+
 /* body: main column + sticky sidebar */
 .projectbody {
   display: grid;

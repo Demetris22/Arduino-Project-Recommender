@@ -69,7 +69,7 @@
   --font-sans: 'Instrument Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, 'Cascadia Code', Consolas, monospace;
 
-  --maxw: 1240px;
+  --maxw: 77.5rem; /* was 1240px; rem so the column scales with the fluid root */
   --gutter: clamp(1rem, 4vw, 3rem);
 
   color-scheme: light;
@@ -79,9 +79,22 @@
 
 html { scrollbar-gutter: stable; scroll-behavior: smooth; }
 
+/* ---- Fluid root: the sizing reference ----
+   Every size in this file is expressed in rem (or clamp() of rems), so the whole
+   layout — type, spacing, container, chrome — scales off this ONE value. Without
+   it, rem is a fixed 16px on every display and the design freezes at its max size
+   above ~1250px, so a laptop with a narrow logical viewport (a 1080p panel at
+   150% OS scaling = 1280 CSS px) renders identical pixels that fill more of the
+   screen and read as "zoomed in".
+   The clamp keeps 16px on real monitors (>=~1777px CSS width, so the external-
+   monitor look is unchanged) and eases down to 14.4px on laptop-class widths.
+   Expressed in rem+vw (not px) so a user's browser default font size and browser
+   zoom are both still honoured. */
+html { font-size: clamp(0.9rem, 0.5rem + 0.45vw, 1rem); }
+
 /* Anchored jumps (hero "Browse the catalog", kit step-to-step) land below the
    sticky 66px header instead of tucked under it. */
-#catalog, .kitsection { scroll-margin-top: 66px; }
+#catalog, .kitsection { scroll-margin-top: 4.125rem; } /* was 66px; tracks the fluid header */
 
 html, body { margin: 0; padding: 0; }
 
@@ -97,7 +110,7 @@ body {
   background: var(--paper-2);
   color: var(--ink);
   font-family: var(--font-sans);
-  font-size: 16px;
+  font-size: 1rem; /* follow the fluid root, not a pinned 16px */
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -166,7 +179,7 @@ a { color: var(--teal-deep); }
   display: flex;
   align-items: center;
   gap: clamp(0.6rem, 1.7vw, 1.4rem);
-  min-height: 50px;
+  min-height: 3.125rem; /* was 50px */
 }
 .brand {
   display: inline-flex;
@@ -176,7 +189,7 @@ a { color: var(--teal-deep); }
   color: var(--ink);
   flex: none;
 }
-.brand__mark { width: 24px; height: 24px; border-radius: 6px; }
+.brand__mark { width: 1.5rem; height: 1.5rem; border-radius: 6px; } /* was 24px */
 .brand__name {
   font-family: var(--font-display);
   font-size: 1.02rem;
@@ -214,7 +227,7 @@ a { color: var(--teal-deep); }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px; height: 34px;
+  width: 2.125rem; height: 2.125rem; /* was 34px */
   border: 1px solid var(--rule);
   border-radius: var(--r-sm);
   background: var(--paper);
@@ -541,6 +554,45 @@ a { color: var(--teal-deep); }
   text-align: center;
   filter: drop-shadow(0 26px 44px rgba(0, 0, 0, 0.45));
 }
+/* the board is a shortcut into the kit editor — lift + hint on hover/focus */
+.hero__board-link {
+  display: block;
+  position: relative;
+  border-radius: var(--r-lg);
+  cursor: pointer;
+  transition: transform 0.28s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.hero__board-link:hover { transform: translateY(-5px); }
+.hero__board-link:focus-visible {
+  outline: 2px solid var(--teal-bright);
+  outline-offset: 8px;
+}
+.hero__board-edit {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -0.3rem);
+  padding: 0.32rem 0.72rem;
+  border-radius: 999px;
+  background: var(--teal-bright);
+  color: #04262a;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 0 6px 16px -4px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  z-index: 3;
+}
+.hero__board-link:hover .hero__board-edit,
+.hero__board-link:focus-visible .hero__board-edit {
+  opacity: 1;
+  transform: translate(-50%, -0.7rem);
+}
 /* a live power LED sitting on the board's corner */
 .hero__board-led {
   position: absolute;
@@ -645,7 +697,11 @@ a { color: var(--teal-deep); }
   flex-wrap: wrap;
   align-items: flex-end;
   gap: clamp(1.6rem, 5vw, 4.5rem);
-  margin: 0;
+  /* margin-block only: keep the <dl>'s default vertical margin off, but DON'T
+     clobber .shell's margin-inline:auto — that's what centres the bar so its
+     left edge lines up under the headline instead of drifting to the viewport
+     edge. */
+  margin-block: 0;
   padding-top: clamp(1.1rem, 2vw, 1.6rem);
   padding-bottom: clamp(2rem, 4vw, 3.2rem);
   border-top: 1px solid var(--hair-on-ink);
@@ -1510,7 +1566,7 @@ a { color: var(--teal-deep); }
 @media (max-width: 940px) {
   .projectbody { grid-template-columns: 1fr; }
 }
-.projectbody__side { display: flex; flex-direction: column; gap: 1rem; position: sticky; top: 70px; }
+.projectbody__side { display: flex; flex-direction: column; gap: 1rem; position: sticky; top: 4.375rem; } /* was 70px */
 @media (max-width: 940px) {
   .projectbody__side { position: static; }
 }

@@ -182,9 +182,17 @@ function HeroBand() {
           </motion.div>
 
           <motion.div className="hero__side" variants={orchestrate(0.12, 0.1)}>
-            <motion.figure className="hero__board" aria-hidden="true" variants={boardIn}>
-              <span className="hero__board-led" />
-              <BoardGlyph board={heroBoard} />
+            <motion.figure className="hero__board" variants={boardIn}>
+              {/* the board doubles as a shortcut into the kit editor */}
+              <Link
+                className="hero__board-link"
+                to="/kit"
+                aria-label={hasKit ? 'Edit your kit' : 'Set up your kit — choose your board'}
+              >
+                <span className="hero__board-led" aria-hidden="true" />
+                <BoardGlyph board={heroBoard} />
+                <span className="hero__board-edit mono" aria-hidden="true">Change board →</span>
+              </Link>
               {/* a crisp white spec chip — the one light surface in the hero, so
                   it doesn't read as all-teal, and it doubles as a readout */}
               <motion.figcaption className="hero__spec" variants={riseIn}>

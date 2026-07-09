@@ -1,7 +1,7 @@
-// CountUp — animated number readout from React Bits (JS variant). Vendored as-is
-// except the Next.js 'use client' directive is dropped (Vite doesn't need it).
-// Used on the cover sheet so the "n boards · n components · n projects" line
-// ticks up on load like a technical readout.
+// CountUp — React Bits (JavaScript + CSS variant). A spring-driven number roll
+// that fires when it scrolls into view. Depends on `motion` (already a dep).
+// Reduced-motion is handled by the caller (the hero renders the plain number
+// instead of mounting this).
 import { useInView, useMotionValue, useSpring } from 'motion/react';
 import { useCallback, useEffect, useRef } from 'react';
 

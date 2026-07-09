@@ -187,6 +187,7 @@
       "mega",
       "esp32"
     ],
+    
     "minDigitalPins": 3,
     "minAnalogPins": 0,
     "requiresFeatures": [],

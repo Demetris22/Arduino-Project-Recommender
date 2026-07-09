@@ -120,7 +120,7 @@ function shape(kind) {
 function PartIcon({ component }) {
   return (
     <svg
-      className="chip__icon"
+      className="part-icon"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"

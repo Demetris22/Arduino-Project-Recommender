@@ -1,19 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Sketchef">
-  <!-- blueprint tile -->
-  <rect width="100" height="100" rx="22" fill="#12314f"/>
-  <rect x="1.5" y="1.5" width="97" height="97" rx="20.5" fill="none" stroke="#5bd0e6" stroke-opacity="0.5" stroke-width="2"/>
+  <!-- teal-ink tile -->
+  <rect width="100" height="100" rx="22" fill="#04363A"/>
 
-  <!-- a drawn "sketch" trace passing through a solder pad, terminating in nodes -->
-  <g stroke="#5bd0e6" stroke-width="4.4" stroke-linecap="round" fill="none">
-    <path d="M23 29 L41 41"/>
-    <path d="M59 59 L77 71"/>
-  </g>
-  <g fill="#5bd0e6">
-    <circle cx="23" cy="29" r="4.2"/>
-    <circle cx="77" cy="71" r="4.2"/>
+  <!-- a circuit trace rising over a node and falling away -->
+  <g stroke="#14C3CA" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M16 68 H32 L42 36 H58 L68 68 H84"/>
   </g>
 
-  <!-- central solder pad: annular ring + bright via -->
-  <circle cx="50" cy="50" r="13" fill="none" stroke="#5bd0e6" stroke-width="4.6"/>
-  <circle cx="50" cy="50" r="4.6" fill="#eef4fc"/>
+  <!-- the signal node -->
+  <circle cx="50" cy="36" r="9" fill="#04363A" stroke="#14C3CA" stroke-width="5"/>
+  <circle cx="50" cy="36" r="3.2" fill="#ffffff"/>
+
+  <!-- terminals -->
+  <circle cx="16" cy="68" r="4.6" fill="#ffffff"/>
+  <circle cx="84" cy="68" r="4.6" fill="#ffffff"/>
 </svg>

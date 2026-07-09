@@ -1,18 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-// Self-hosted variable faces (font-display: swap). Archivo is an industrial
-// grotesque with a drafting-label feel; it carries both display and body.
-// Spline Sans Mono is the annotation/instrument voice (specs, badges, code,
-// labels). Together they set the blueprint tone.
-// Standard axes so the display headline can use Archivo's width axis (an
-// expanded, title-block cut); body + labels stay at the default width.
-import '@fontsource-variable/archivo/standard.css';
-import '@fontsource-variable/spline-sans-mono';
-import App from './App.jsx';
-import './index.css';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+// Type: a characterful display grotesk, a clean UI sans, and a mono that carries
+// every spec / badge / code block. Deliberately not Inter / Roboto / system-ui.
+import '@fontsource-variable/bricolage-grotesque';
+import '@fontsource-variable/instrument-sans';
+import '@fontsource-variable/jetbrains-mono';
+
+import './index.css';
+import App from './App.jsx';
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </StrictMode>
 );

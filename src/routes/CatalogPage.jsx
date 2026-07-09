@@ -35,11 +35,12 @@ const STATUS_FACETS = [
 // The headline, tokenised so each WORD can stagger in on its own. The tail
 // four words are the teal accent phrase.
 const HEADLINE = [
-  'Browse', 'every', 'project.', 'Find', 'the', 'ones',
+  'With', 'your', 'Arduino', 'and', 'parts,',
+  { t: 'see', accent: true },
+  { t: 'what', accent: true },
   { t: 'you', accent: true },
   { t: 'can', accent: true },
-  { t: 'build', accent: true },
-  { t: 'tonight.', accent: true },
+  { t: 'build.', accent: true },
 ];
 // Index of the first accent word — used to phase the "current" sheen across them.
 const FIRST_ACCENT = HEADLINE.findIndex((w) => typeof w === 'object' && w.accent);

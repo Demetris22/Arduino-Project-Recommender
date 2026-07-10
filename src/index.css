@@ -23,6 +23,8 @@
   --teal: #00979d;
   --teal-deep: #006f73;   /* small text / links (AA on white) */
   --teal-bright: #14c3ca; /* strokes on teal-ink */
+  --teal-bright-2: #2ad4db; /* hover lift of --teal-bright */
+  --on-teal: #04262a;     /* text on a --teal-bright fill (near-black) */
   --teal-ink: #04363a;    /* solid blocks + diagram tiles */
   --teal-ink-2: #0a4a4f;
   --teal-wash: #e8f5f5;
@@ -58,6 +60,9 @@
   --lift-1: 0 1px 2px rgba(12, 27, 28, 0.05), 0 2px 6px -2px rgba(12, 27, 28, 0.07);
   --lift-2: 0 2px 4px rgba(12, 27, 28, 0.06), 0 8px 20px -6px rgba(12, 27, 28, 0.11);
   --lift-3: 0 4px 10px rgba(12, 27, 28, 0.07), 0 22px 44px -14px rgba(12, 27, 28, 0.18);
+
+  /* ---- the one teal live/focus ring ---- */
+  --ring-teal: 0 0 0 3px rgba(0, 151, 157, 0.16);
 
   /* ---- shape: one radius scale, applied everywhere ---- */
   --r-sm: 4px;
@@ -189,7 +194,7 @@ a { color: var(--teal-deep); }
   color: var(--ink);
   flex: none;
 }
-.brand__mark { width: 1.5rem; height: 1.5rem; border-radius: 6px; } /* was 24px */
+.brand__mark { width: 1.5rem; height: 1.5rem; border-radius: var(--r-sm); } /* was 24px */
 .brand__name {
   font-family: var(--font-display);
   font-size: 1.02rem;
@@ -297,7 +302,7 @@ a { color: var(--teal-deep); }
 }
 .kitpill.is-set .kitpill__dot {
   background: var(--teal);
-  box-shadow: 0 0 0 3px rgba(0, 151, 157, 0.18);
+  box-shadow: var(--ring-teal);
 }
 .kitpill__n { color: var(--teal-deep); font-weight: 700; }
 
@@ -499,10 +504,6 @@ a { color: var(--teal-deep); }
   50% { text-shadow: 0 0 42px rgba(20, 195, 202, 0.72), 0 0 14px rgba(20, 195, 202, 0.5); }
 }
 
-.hero__title em {
-  font-style: normal;
-  color: var(--teal-bright);
-}
 .hero__sub {
   margin: 0 0 1.9rem;
   max-width: 48ch;
@@ -523,7 +524,7 @@ a { color: var(--teal-deep); }
 }
 .hero__actions .btn--primary {
   background: linear-gradient(176deg, var(--teal-bright) 0%, var(--teal) 100%);
-  color: #04262a;
+  color: var(--on-teal);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.5),
     0 10px 26px -8px rgba(20, 195, 202, 0.55),
@@ -546,7 +547,7 @@ a { color: var(--teal-deep); }
   .hero__actions .btn--primary::after { animation: btn-sheen 3.4s linear infinite; }
 }
 .hero__actions .btn--primary:hover {
-  background: linear-gradient(176deg, #34dbe2 0%, var(--teal-bright) 100%);
+  background: linear-gradient(176deg, var(--teal-bright-2) 0%, var(--teal-bright) 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.6),
     0 14px 34px -8px rgba(20, 195, 202, 0.72),
@@ -612,7 +613,7 @@ a { color: var(--teal-deep); }
   padding: 0.32rem 0.72rem;
   border-radius: 999px;
   background: var(--teal-bright);
-  color: #04262a;
+  color: var(--on-teal);
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -704,7 +705,7 @@ a { color: var(--teal-deep); }
   height: 7px;
   border-radius: 50%;
   background: var(--teal);
-  box-shadow: 0 0 0 3px rgba(0, 151, 157, 0.16);
+  box-shadow: var(--ring-teal);
 }
 .hero__spec-name {
   font-family: var(--font-display);
@@ -841,10 +842,10 @@ a { color: var(--teal-deep); }
 /* teal fill + near-black text: AA-safe and unmistakably Arduino */
 .btn--primary {
   background: var(--teal-bright);
-  color: #04262a;
+  color: var(--on-teal);
   font-weight: 700;
 }
-.btn--primary:hover { background: #2ad4db; }
+.btn--primary:hover { background: var(--teal-bright-2); }
 
 .btn--ghost-ink {
   background: transparent;
@@ -992,7 +993,7 @@ a { color: var(--teal-deep); }
   color: var(--ink);
 }
 .searchbox input::placeholder { color: var(--ink-3); }
-.searchbox input:focus { border-color: var(--teal); outline: none; box-shadow: 0 0 0 3px rgba(0,151,157,0.14); }
+.searchbox input:focus { border-color: var(--teal); outline: none; box-shadow: var(--ring-teal); }
 
 .facets { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
 .facet {
@@ -1004,7 +1005,7 @@ a { color: var(--teal-deep); }
   font-weight: 500;
   color: var(--ink-2);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
 }
 .facet:hover { border-color: var(--rule-strong); color: var(--ink); }
 .facet.is-on {
@@ -1116,7 +1117,7 @@ a { color: var(--teal-deep); }
   max-height: 120px;
   color: var(--teal-bright);
 }
-.pcard:hover .project-diagram { color: #4fe3e9; }
+.pcard:hover .project-diagram { color: var(--teal-bright-2); }
 
 .pcard__body {
   display: flex;
@@ -1203,10 +1204,16 @@ a { color: var(--teal-deep); }
   right: 0.75rem; top: 0.6rem;
   z-index: 1;
 }
-.pcard__figure .badge--go { color: #04262a; background: var(--teal-bright); }
+.pcard__figure .badge--go { color: var(--on-teal); background: var(--teal-bright); }
 .pcard__figure .badge--near { color: #2a1c00; background: #e8a33a; }
 .pcard__figure .badge--far { color: var(--on-ink-2); background: rgba(238, 246, 246, 0.1); }
 .pcard__figure .badge--stop { color: #ffe9ed; background: rgba(180, 54, 76, 0.85); }
+
+/* the catalog's empty result + trailing "clear filters" row */
+.catalog__empty { padding-block: 2.5rem; }
+.catalog__clear { padding-bottom: 2rem; }
+/* the 404 shell */
+.notfound { padding-block: clamp(3rem, 8vw, 6rem); }
 
 /* ============================ empty state ============================ */
 .empty {
@@ -1243,6 +1250,7 @@ a { color: var(--teal-deep); }
   padding-block: 2.2rem;
   font-size: 0.84rem;
 }
+.sitefooter__in p { margin: 0; }
 .sitefooter a { color: var(--on-ink); text-decoration: none; border-bottom: 1px solid var(--hair-on-ink); }
 .sitefooter a:hover { color: var(--teal-bright); border-color: var(--teal-bright); }
 .sitefooter__brand { font-family: var(--font-display); font-weight: 700; color: var(--on-ink); letter-spacing: -0.02em; }
@@ -1363,7 +1371,7 @@ a { color: var(--teal-deep); }
   font-weight: 700;
   transition: background 0.16s, color 0.16s;
 }
-.boardcard.is-selected .boardcard__check { background: var(--teal-bright); color: #04262a; }
+.boardcard.is-selected .boardcard__check { background: var(--teal-bright); color: var(--on-teal); }
 
 /* ============================ parts checklist (kit page) ============================ */
 .parts__bar {
@@ -1437,7 +1445,7 @@ a { color: var(--teal-deep); }
   background: var(--teal-wash);
 }
 .chip.is-owned .chip__name { color: var(--teal-deep); font-weight: 600; }
-.chip.is-owned .chip__check { background: var(--teal); color: #fff; }
+.chip.is-owned .chip__check { background: var(--teal); color: var(--paper); }
 
 /* ============================ unlock panel ============================ */
 .unlock {
@@ -1461,7 +1469,8 @@ a { color: var(--teal-deep); }
   align-items: center;
   gap: 0.9rem;
   padding: 0.85rem 1rem;
-  background: var(--paper);
+  /* plane 1: recessed rows inside the white panel, per the three-plane rule */
+  background: var(--paper-2);
   border: 1px solid var(--hair);
   border-radius: var(--r);
 }
@@ -1501,7 +1510,7 @@ a { color: var(--teal-deep); }
   font-size: clamp(2rem, 4vw, 3.2rem);
   font-weight: 700;
   line-height: 0.9;
-  color: var(--paper-3);
+  color: var(--rule); /* a ghost numeral, but one you can actually see */
   letter-spacing: -0.04em;
   margin: 0;
 }

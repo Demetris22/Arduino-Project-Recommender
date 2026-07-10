@@ -156,7 +156,7 @@ function UnlockPanel() {
     <section className="unlock">
       <h2 className="unlock__title">Unlock more projects</h2>
       <p className="unlock__sub">
-        The highest-leverage parts you don&apos;t own yet, ranked by how many projects each one opens up.
+        The highest-leverage parts you don’t own yet, ranked by how many projects each one opens up.
       </p>
 
       <ul className="unlock__list">
@@ -242,7 +242,7 @@ function KitPage() {
         <h1 className="pagehead__title">What are you building with?</h1>
         <p className="pagehead__sub">
           Pick your board and tick the parts you own. Sketchef will mark every project in the catalog
-          as buildable, almost there, or out of reach — nothing gets hidden.
+          as buildable, almost there, or out of reach. Nothing gets hidden.
         </p>
       </header>
 

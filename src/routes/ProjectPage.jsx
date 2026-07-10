@@ -16,6 +16,7 @@ import Breadboard from '../components/Breadboard.jsx';
 import BREADBOARDS from '../data/breadboards.js';
 import PartIcon from '../components/PartIcon.jsx';
 import StatusBadge from '../components/StatusBadge.jsx';
+import { useCurtainClick } from '../components/Curtain.jsx';
 import NotFoundPage from './NotFoundPage.jsx';
 import { formatTime } from '../lib/format.js';
 
@@ -58,7 +59,7 @@ function PartsChecklist({ project }) {
   if (project.requires.length === 0) {
     return (
       <p className="parts-none">
-        No external parts needed — this project uses only the board&apos;s built-in hardware.
+        No external parts needed. This project uses only the board’s built-in hardware.
       </p>
     );
   }
@@ -156,6 +157,7 @@ function ProjectPage() {
   const { id } = useParams();
   const { boardId } = useKit();
   const { statusById } = useProjectStatus();
+  const curtain = useCurtainClick();
 
   const project = projects.find((p) => p.id === id);
   const index = projects.findIndex((p) => p.id === id);
@@ -196,13 +198,13 @@ function ProjectPage() {
 
         {reasons.length > 0 && (
           <div className="notice notice--stop" role="note">
-            <p className="notice__title">Your {board.name} can&apos;t run this project</p>
+            <p className="notice__title">Your {board.name} can’t run this project</p>
             <ul className="notice__list">
               {reasons.map((r) => (
                 <li key={r}>{r}</li>
               ))}
             </ul>
-            <Link className="linkbtn" to="/kit">
+            <Link className="linkbtn" to="/kit" onClick={curtain('/kit', 'forward')}>
               Change your board
             </Link>
           </div>
@@ -210,7 +212,7 @@ function ProjectPage() {
 
         <figure className="projectfig">
           <div className="projectfig__tile">
-            <span className="projectfig__tag mono">Fig. 01 — wiring schematic</span>
+            <span className="projectfig__tag mono">Fig. 01 · wiring schematic</span>
             <ProjectDiagram project={project} />
           </div>
         </figure>
@@ -225,7 +227,7 @@ function ProjectPage() {
                   <Breadboard spec={breadboard} />
                 </div>
                 <figcaption className="bbfig__cap mono">
-                  Colour-coded jumpers — follow the connection list below to build it.
+                  The jumpers match the connection list below, wire for wire.
                 </figcaption>
               </figure>
             )}
@@ -269,7 +271,7 @@ function ProjectPage() {
             </div>
 
             <div className="sidecard">
-              <h2 className="sidecard__title">What you&apos;ll learn</h2>
+              <h2 className="sidecard__title">What you’ll learn</h2>
               <ul className="taglist">
                 {project.learn.map((t) => (
                   <li className="tag mono" key={t}>

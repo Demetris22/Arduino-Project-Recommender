@@ -4,14 +4,14 @@ function SiteFooter() {
   return (
     <footer className="sitefooter">
       <div className="shell sitefooter__in">
-        <p style={{ margin: 0 }}>
-          <span className="sitefooter__brand">Sketchef</span> — an Arduino project catalog. Built by{' '}
+        <p>
+          <span className="sitefooter__brand">Sketchef</span> is an Arduino project catalog, built by{' '}
           <a href="https://github.com/Demetris22" target="_blank" rel="noreferrer noopener">
             Demetris Demetriou
           </a>
           .
         </p>
-        <p style={{ margin: 0 }}>
+        <p>
           <a href={REPO} target="_blank" rel="noreferrer noopener">
             View source ↗
           </a>

@@ -86,11 +86,14 @@ it is what gives a light site real depth.
 ### Color
 
 ```
---teal        #00979D   the brand. LARGE / BOLD TEXT ONLY  (~3.1:1 on white)
---teal-deep   #006F73   every small text run + link        (~5.2:1 — AA)
---teal-bright #14C3CA   strokes and numerals on teal-ink
---teal-ink    #04363A   plane 3
+--teal          #00979D   the brand. LARGE / BOLD TEXT ONLY  (~3.1:1 on white)
+--teal-deep     #006F73   every small text run + link        (~5.2:1 — AA)
+--teal-bright   #14C3CA   strokes and numerals on teal-ink
+--teal-bright-2 #2AD4DB   the hover lift of --teal-bright (buttons, diagram tints)
+--on-teal       #04262A   text sitting on a --teal-bright fill
+--teal-ink      #04363A   plane 3
 --ink #0C1B1C   --ink-2 #4A5C5D   --ink-3 #7C8C8D
+--ring-teal     the one 3px teal halo (live dots, input focus)
 ```
 Status: `buildable = --teal` · `near = --near #B56A00` · `far = --ink-3` · `incompatible = --stop #B4364C`.
 

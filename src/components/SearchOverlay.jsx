@@ -57,7 +57,7 @@ function SearchOverlay({ onClose }) {
         <p className="searchoverlay__none">No projects match “{query}”.</p>
       ) : (
         <ul className="searchoverlay__list">
-          {!query.trim() && <li className="searchoverlay__hint mono">Popular projects</li>}
+          {!query.trim() && <li className="searchoverlay__hint mono">From the catalog</li>}
           {results.map((p) => (
             <li key={p.id}>
               <button type="button" className="searchoverlay__row" onClick={() => go(p.id)}>

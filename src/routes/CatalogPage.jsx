@@ -38,7 +38,7 @@ const STATUS_FACETS = [
 const HEADLINE = [
   'Build', 'with',
   { t: 'what', accent: true },
-  { t: "you've", accent: true },
+  { t: 'you’ve', accent: true },
   { t: 'got', accent: true },
 ];
 // Index of the first accent word — used to phase the "current" sheen across them.
@@ -171,7 +171,7 @@ function HeroBand() {
 
             <motion.p className="hero__sub" variants={riseIn}>
               Browse the whole catalog freely. Tell Sketchef which board and parts you own, and it
-              marks exactly what you can make right now — wiring, steps and code included.
+              marks exactly what you can make right now. Wiring, steps and code included.
             </motion.p>
 
             <motion.div className="hero__actions" variants={riseIn}>
@@ -192,7 +192,7 @@ function HeroBand() {
                 className="hero__board-link"
                 to="/kit"
                 onClick={curtain('/kit', 'forward')}
-                aria-label={hasKit ? 'Edit your kit' : 'Set up your kit — choose your board'}
+                aria-label={hasKit ? 'Edit your kit' : 'Set up your kit: choose your board'}
               >
                 <span className="hero__board-led" aria-hidden="true" />
                 <BoardGlyph board={heroBoard} />
@@ -241,6 +241,7 @@ function HeroBand() {
 }
 
 function KitStrip({ counts, statusFilter, onToggleStatus }) {
+  const curtain = useCurtainClick();
   const cells = [
     { id: 'buildable', cls: 'go', label: 'buildable', n: counts.buildable },
     { id: 'near', cls: 'near', label: 'almost', n: counts.near },
@@ -265,7 +266,7 @@ function KitStrip({ counts, statusFilter, onToggleStatus }) {
           </button>
         ))}
         <span className="kitstrip__sep" />
-        <Link className="btn btn--outline btn--sm" to="/kit">
+        <Link className="btn btn--outline btn--sm" to="/kit" onClick={curtain('/kit', 'forward')}>
           Edit kit
         </Link>
       </div>
@@ -430,7 +431,7 @@ function CatalogPage() {
         </div>
 
         {visible.length === 0 ? (
-          <div style={{ padding: '2.5rem 0' }}>
+          <div className="catalog__empty">
             <EmptyState
               stamp="Nothing matches"
               action={
@@ -458,7 +459,7 @@ function CatalogPage() {
         )}
 
         {filtersActive && visible.length > 0 && (
-          <p style={{ paddingBottom: '2rem' }}>
+          <p className="catalog__clear">
             <button type="button" className="linkbtn" onClick={clearAll}>
               Clear all filters
             </button>

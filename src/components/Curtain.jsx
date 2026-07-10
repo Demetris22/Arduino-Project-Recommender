@@ -1,33 +1,29 @@
 // A clip-path "curtain" page transition (inspired by Motion's curtains/clip-wipe
-// example), used when moving between the catalog and the kit. The trick that
-// makes it read as a real transition is timing the route swap to happen WHILE
-// the screen is covered:
+// example), used when moving between the catalog and the kit. It is ONE
+// continuous sweep: a single easeInOut progress drives the clip from hidden →
+// covered → revealed, so it is fastest exactly at the covered midpoint and never
+// stops in the middle. The route is swapped at that midpoint (behind the fully
+// covered screen) via a timer, so you never see the old page jump to the new one.
 //
-//   click → curtain wipes IN to cover → navigate (hidden) → curtain wipes OUT
-//
-// so you never see the old page jump to the new one. Forward (to the kit) sweeps
-// one way; back sweeps the other. Reduced-motion navigates instantly with no
-// curtain. Links opt in via useCurtainNav(); everything else navigates normally.
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+// The clip is a rectangle whose left and right edges are quadratic beziers, in
+// 0..1 objectBoundingBox space (resolution-independent). Pushing each edge's
+// control point ahead of its endpoints gives the convex "bulge" leading edge.
+// Forward (to the kit) sweeps one way; back mirrors it. Reduced-motion navigates
+// instantly. Links opt in via useCurtainNav().
+import { createContext, memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { animate, motion, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 
 const CurtainCtx = createContext(() => {});
 export const useCurtainNav = () => useContext(CurtainCtx);
 
-const EASE = [0.66, 0, 0.34, 1]; // easeInOutCubic — a decisive, even sweep
-const DURATION = 0.6;
+const DURATION = 1; // seconds, whole sweep (cover + reveal)
 
-// The clip region is a rectangle with a curved LEFT and RIGHT edge, in 0..1
-// objectBoundingBox space (so it's resolution-independent). Sweeping the edges
-// across — with the control points pushed ahead of the endpoints — gives the
-// convex "bulge" leading edge from the Motion curtains example, instead of a
-// flat vertical wipe. Each edge: endpoints at x, control (bulge) at cx.
 const P = (lx, lc, rx, rc) => `M ${lx} 0 Q ${lc} 0.5 ${lx} 1 L ${rx} 1 Q ${rc} 0.5 ${rx} 0 Z`;
 
-// forward keyframes [leftX, leftCtrl, rightX, rightCtrl]:
-//  hidden  → the right (leading) edge bulges across → covered → the left edge
-//  bulges across to reveal → gone. cover fills from the left; reveal empties it.
+// keyframes [leftX, leftCtrl, rightX, rightCtrl] across the sweep. The right
+// (leading) edge bulges across to cover; then the left edge bulges across to
+// reveal. Control points pushed past the endpoints = the convex bulge.
 const KEYS = {
   hidden: [0, 0, 0, 0],
   coverMid: [0, 0, 0.12, 1.06],
@@ -35,25 +31,34 @@ const KEYS = {
   revealMid: [0.42, 1.36, 1.2, 1.3],
   revealed: [1.22, 1.34, 1.26, 1.36],
 };
+const ORDER = ['hidden', 'coverMid', 'covered', 'revealMid', 'revealed'];
 // back = the same sweep mirrored horizontally (x → 1 − x, left/right swapped).
 const mirror = ([lx, lc, rx, rc]) => [1 - rx, 1 - rc, 1 - lx, 1 - lc];
 const dOf = (dir, key) => P(...(dir === 'back' ? mirror(KEYS[key]) : KEYS[key]));
 
-function Curtain({ dir, phase, onCovered, onRevealed }) {
-  const keys = phase === 'cover' ? ['hidden', 'coverMid', 'covered'] : ['covered', 'revealMid', 'revealed'];
-  const d = keys.map((k) => dOf(dir, k));
+const Curtain = memo(function Curtain({ dir, onMidpoint, onDone }) {
+  const stops = ORDER.map((k) => dOf(dir, k));
+  const progress = useMotionValue(0);
+  const d = useTransform(progress, [0, 0.25, 0.5, 0.75, 1], stops);
+
+  useEffect(() => {
+    const controls = animate(progress, 1, { duration: DURATION, ease: 'easeInOut' });
+    const mid = window.setTimeout(onMidpoint, DURATION * 500); // swap route at full cover
+    const done = window.setTimeout(onDone, DURATION * 1000 + 20);
+    return () => {
+      controls.stop();
+      window.clearTimeout(mid);
+      window.clearTimeout(done);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="curtain" style={{ clipPath: 'url(#curtain-clip)', WebkitClipPath: 'url(#curtain-clip)' }}>
       <svg className="curtain__clip" width="0" height="0" aria-hidden="true" focusable="false">
         <defs>
           <clipPath id="curtain-clip" clipPathUnits="objectBoundingBox">
-            <motion.path
-              initial={{ d: d[0] }}
-              animate={{ d }}
-              transition={{ duration: DURATION, ease: EASE, times: [0, 0.5, 1] }}
-              onAnimationComplete={() => (phase === 'cover' ? onCovered() : onRevealed())}
-            />
+            <motion.path d={d} />
           </clipPath>
         </defs>
       </svg>
@@ -63,15 +68,16 @@ function Curtain({ dir, phase, onCovered, onRevealed }) {
       </span>
     </div>
   );
-}
+});
 
 export function CurtainProvider({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
   const reduce = useReducedMotion();
-  const [tx, setTx] = useState(null); // { to, dir, phase }
+  const [tx, setTx] = useState(null); // { to, dir }
   const txRef = useRef(null);
   const busy = useRef(false);
+  const navigated = useRef(false);
 
   useEffect(() => {
     txRef.current = tx;
@@ -87,20 +93,22 @@ export function CurtainProvider({ children }) {
         return;
       }
       busy.current = true;
-      setTx({ to, dir, phase: 'cover' });
+      navigated.current = false;
+      setTx({ to, dir });
     },
     [navigate, reduce, location.pathname]
   );
 
-  // covered → swap the route behind the curtain, then wipe it away
-  const onCovered = useCallback(() => {
+  // fired at the covered midpoint: swap the route behind the curtain
+  const onMidpoint = useCallback(() => {
+    if (navigated.current) return;
+    navigated.current = true;
     const s = txRef.current;
-    if (!s) return;
-    navigate(s.to);
-    setTx({ ...s, phase: 'reveal' });
+    if (s) navigate(s.to);
   }, [navigate]);
 
-  const onRevealed = useCallback(() => {
+  // fired when the sweep finishes revealing the new page
+  const onDone = useCallback(() => {
     busy.current = false;
     setTx(null);
   }, []);
@@ -108,11 +116,7 @@ export function CurtainProvider({ children }) {
   return (
     <CurtainCtx.Provider value={curtainNav}>
       {children}
-      <AnimatePresence>
-        {tx && (
-          <Curtain key="curtain" dir={tx.dir} phase={tx.phase} onCovered={onCovered} onRevealed={onRevealed} />
-        )}
-      </AnimatePresence>
+      {tx && <Curtain key="curtain" dir={tx.dir} onMidpoint={onMidpoint} onDone={onDone} />}
     </CurtainCtx.Provider>
   );
 }

@@ -237,6 +237,7 @@ a { color: var(--teal-deep); }
   pointer-events: none;
   will-change: clip-path;
 }
+.curtain__clip { position: absolute; width: 0; height: 0; }
 .curtain__mark {
   display: inline-flex;
   align-items: center;

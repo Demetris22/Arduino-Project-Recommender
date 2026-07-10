@@ -15,29 +15,53 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 const CurtainCtx = createContext(() => {});
 export const useCurtainNav = () => useContext(CurtainCtx);
 
-const EASE = [0.76, 0, 0.24, 1]; // easeInOutQuart — a decisive, even sweep
-const DURATION = 0.52;
+const EASE = [0.66, 0, 0.34, 1]; // easeInOutCubic — a decisive, even sweep
+const DURATION = 0.6;
+
+// The clip region is a rectangle with a curved LEFT and RIGHT edge, in 0..1
+// objectBoundingBox space (so it's resolution-independent). Sweeping the edges
+// across — with the control points pushed ahead of the endpoints — gives the
+// convex "bulge" leading edge from the Motion curtains example, instead of a
+// flat vertical wipe. Each edge: endpoints at x, control (bulge) at cx.
+const P = (lx, lc, rx, rc) => `M ${lx} 0 Q ${lc} 0.5 ${lx} 1 L ${rx} 1 Q ${rc} 0.5 ${rx} 0 Z`;
+
+// forward keyframes [leftX, leftCtrl, rightX, rightCtrl]:
+//  hidden  → the right (leading) edge bulges across → covered → the left edge
+//  bulges across to reveal → gone. cover fills from the left; reveal empties it.
+const KEYS = {
+  hidden: [0, 0, 0, 0],
+  coverMid: [0, 0, 0.12, 1.06],
+  covered: [0, 0, 1.18, 1.32],
+  revealMid: [0.42, 1.36, 1.2, 1.3],
+  revealed: [1.22, 1.34, 1.26, 1.36],
+};
+// back = the same sweep mirrored horizontally (x → 1 − x, left/right swapped).
+const mirror = ([lx, lc, rx, rc]) => [1 - rx, 1 - rc, 1 - lx, 1 - lc];
+const dOf = (dir, key) => P(...(dir === 'back' ? mirror(KEYS[key]) : KEYS[key]));
 
 function Curtain({ dir, phase, onCovered, onRevealed }) {
-  const forward = dir !== 'back';
-  // clip-path inset(top right bottom left): collapse to one edge = invisible.
-  const HIDDEN_ENTER = forward ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)';
-  const FULL = 'inset(0 0 0 0)';
-  const HIDDEN_EXIT = forward ? 'inset(0 100% 0 0)' : 'inset(0 0 0 100%)';
+  const keys = phase === 'cover' ? ['hidden', 'coverMid', 'covered'] : ['covered', 'revealMid', 'revealed'];
+  const d = keys.map((k) => dOf(dir, k));
 
   return (
-    <motion.div
-      className="curtain"
-      initial={{ clipPath: HIDDEN_ENTER }}
-      animate={{ clipPath: phase === 'cover' ? FULL : HIDDEN_EXIT }}
-      transition={{ duration: DURATION, ease: EASE }}
-      onAnimationComplete={() => (phase === 'cover' ? onCovered() : onRevealed())}
-    >
+    <div className="curtain" style={{ clipPath: 'url(#curtain-clip)', WebkitClipPath: 'url(#curtain-clip)' }}>
+      <svg className="curtain__clip" width="0" height="0" aria-hidden="true" focusable="false">
+        <defs>
+          <clipPath id="curtain-clip" clipPathUnits="objectBoundingBox">
+            <motion.path
+              initial={{ d: d[0] }}
+              animate={{ d }}
+              transition={{ duration: DURATION, ease: EASE, times: [0, 0.5, 1] }}
+              onAnimationComplete={() => (phase === 'cover' ? onCovered() : onRevealed())}
+            />
+          </clipPath>
+        </defs>
+      </svg>
       <span className="curtain__mark" aria-hidden="true">
         <img src="/favicon.svg" alt="" width="42" height="42" />
         <span>Sketchef</span>
       </span>
-    </motion.div>
+    </div>
   );
 }
 

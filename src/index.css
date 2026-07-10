@@ -223,6 +223,34 @@ a { color: var(--teal-deep); }
 }
 .siteheader__spacer { flex: 1; }
 
+/* ============================ page-transition curtain ============================
+   A teal-ink panel that clip-wipes across on catalog <-> kit navigation, covering
+   the screen while the route swaps behind it. clip-path is animated in Curtain.jsx;
+   this is just the surface. */
+.curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(115deg, var(--teal-ink) 0%, var(--teal-ink-2) 100%);
+  pointer-events: none;
+  will-change: clip-path;
+}
+.curtain__mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.curtain__mark img { width: 2.6rem; height: 2.6rem; }
+.curtain__mark span {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.7rem;
+  letter-spacing: -0.03em;
+  color: var(--on-ink);
+}
+
 .iconbtn {
   display: inline-flex;
   align-items: center;

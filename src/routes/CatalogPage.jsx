@@ -17,6 +17,7 @@ import CountUp from '../components/CountUp.jsx';
 import BoardGlyph from '../components/BoardGlyph.jsx';
 import HeroCircuit from '../components/HeroCircuit.jsx';
 import ShinyText from '../components/ShinyText.jsx';
+import { useCurtainClick } from '../components/Curtain.jsx';
 
 const DIFFICULTIES = ['beginner', 'intermediate', 'advanced'];
 const DIFFICULTY_ORDER = { beginner: 0, intermediate: 1, advanced: 2 };
@@ -72,6 +73,7 @@ const orchestrate = (staggerChildren, delayChildren = 0) => ({
 function HeroBand() {
   const { hasKit, boardId } = useKit();
   const reduce = useReducedMotion();
+  const curtain = useCurtainClick();
   const heroRef = useRef(null);
   // Show the user's own board once they have one; otherwise the archetypal Uno.
   const heroBoard = boards.find((b) => b.id === (boardId ?? 'uno')) ?? boards[0];
@@ -173,7 +175,7 @@ function HeroBand() {
             </motion.p>
 
             <motion.div className="hero__actions" variants={riseIn}>
-              <Link className="btn btn--primary" to="/kit">
+              <Link className="btn btn--primary" to="/kit" onClick={curtain('/kit', 'forward')}>
                 {hasKit ? 'Edit your kit' : 'Set up your kit'}
                 <span aria-hidden="true">→</span>
               </Link>
@@ -189,6 +191,7 @@ function HeroBand() {
               <Link
                 className="hero__board-link"
                 to="/kit"
+                onClick={curtain('/kit', 'forward')}
                 aria-label={hasKit ? 'Edit your kit' : 'Set up your kit — choose your board'}
               >
                 <span className="hero__board-led" aria-hidden="true" />

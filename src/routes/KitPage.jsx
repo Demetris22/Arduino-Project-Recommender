@@ -13,6 +13,7 @@ import { useKit } from '../kit/KitContext.jsx';
 import { useProjectStatus } from '../kit/useProjectStatus.js';
 import BoardGlyph from '../components/BoardGlyph.jsx';
 import PartIcon from '../components/PartIcon.jsx';
+import { useCurtainClick } from '../components/Curtain.jsx';
 
 const data = { boards, components, projects };
 
@@ -224,6 +225,7 @@ function ShareRow() {
 function KitPage() {
   const { hasKit } = useKit();
   const { counts } = useProjectStatus();
+  const curtain = useCurtainClick();
   const partsRef = useRef(null);
 
   // The "road": choosing a board carries the reader straight down to the parts
@@ -270,7 +272,7 @@ function KitPage() {
             With this kit you can build <b>{counts.buildable}</b> of {projects.length} projects right
             now, and <b>{counts.near}</b> more are one or two parts away.
           </p>
-          <Link className="btn btn--primary" to="/#catalog">
+          <Link className="btn btn--primary" to="/#catalog" onClick={curtain('/#catalog', 'back')}>
             See what you can build <span aria-hidden="true">→</span>
           </Link>
         </div>

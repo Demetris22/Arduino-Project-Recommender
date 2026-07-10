@@ -5,14 +5,16 @@ import { NavLink, Link } from 'react-router-dom';
 import boards from '../data/boards.json';
 import { useKit } from '../kit/KitContext.jsx';
 import { useProjectStatus } from '../kit/useProjectStatus.js';
+import { useCurtainClick } from './Curtain.jsx';
 
 function KitPill() {
   const { boardId, parts, hasKit } = useKit();
   const { counts } = useProjectStatus();
+  const curtain = useCurtainClick();
 
   if (!hasKit) {
     return (
-      <Link className="kitpill" to="/kit">
+      <Link className="kitpill" to="/kit" onClick={curtain('/kit', 'forward')}>
         <span className="kitpill__dot" aria-hidden="true" />
         Set up your kit
       </Link>
@@ -27,6 +29,7 @@ function KitPill() {
     <Link
       className="kitpill is-set"
       to="/kit"
+      onClick={curtain('/kit', 'forward')}
       aria-label={`Your kit: ${board?.name}, ${parts.length} ${partWord}, ${counts.buildable} buildable`}
     >
       <span className="kitpill__dot" aria-hidden="true" />
@@ -42,6 +45,7 @@ function KitPill() {
 }
 
 function SiteHeader({ onOpenSearch }) {
+  const curtain = useCurtainClick();
   return (
     <header className="siteheader">
       <div className="shell siteheader__in">
@@ -54,12 +58,14 @@ function SiteHeader({ onOpenSearch }) {
           <NavLink
             to="/"
             end
+            onClick={curtain('/', 'back')}
             className={({ isActive }) => `sitenav__link${isActive ? ' is-active' : ''}`}
           >
             Projects
           </NavLink>
           <NavLink
             to="/kit"
+            onClick={curtain('/kit', 'forward')}
             className={({ isActive }) => `sitenav__link${isActive ? ' is-active' : ''}`}
           >
             My Kit

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 
 import { KitProvider } from './kit/KitContext.jsx';
+import { CurtainProvider } from './components/Curtain.jsx';
 import SiteHeader from './components/SiteHeader.jsx';
 import SiteFooter from './components/SiteFooter.jsx';
 import SearchOverlay from './components/SearchOverlay.jsx';
@@ -37,25 +38,27 @@ function App() {
 
   return (
     <KitProvider>
-      <ScrollToTop />
-      <a className="skip-link" href="#main">
-        Skip to content
-      </a>
+      <CurtainProvider>
+        <ScrollToTop />
+        <a className="skip-link" href="#main">
+          Skip to content
+        </a>
 
-      <SiteHeader onOpenSearch={() => setSearchOpen(true)} />
+        <SiteHeader onOpenSearch={() => setSearchOpen(true)} />
 
-      <main id="main">
-        <Routes>
-          <Route path="/" element={<CatalogPage />} />
-          <Route path="/p/:id" element={<ProjectPage />} />
-          <Route path="/kit" element={<KitPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </main>
+        <main id="main">
+          <Routes>
+            <Route path="/" element={<CatalogPage />} />
+            <Route path="/p/:id" element={<ProjectPage />} />
+            <Route path="/kit" element={<KitPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </main>
 
-      <SiteFooter />
+        <SiteFooter />
 
-      {searchOpen && <SearchOverlay onClose={() => setSearchOpen(false)} />}
+        {searchOpen && <SearchOverlay onClose={() => setSearchOpen(false)} />}
+      </CurtainProvider>
     </KitProvider>
   );
 }

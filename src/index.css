@@ -436,8 +436,8 @@ a { color: var(--teal-deep); }
   color: transparent;
   /* ground the letters on the dark PCB so they don't float flat */
   text-shadow: 0 2px 22px rgba(0, 0, 0, 0.28);
-  /* GPU hint + isolate the per-word blur so it never bleeds onto a neighbour */
-  will-change: transform, filter, opacity;
+  /* GPU hint — entrance animates transform + opacity only (compositor-friendly) */
+  will-change: transform, opacity;
 }
 .hero__word--accent {
   /* layer a moving highlight band OVER a vertical teal gradient */

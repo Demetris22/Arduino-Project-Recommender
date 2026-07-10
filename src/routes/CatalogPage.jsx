@@ -43,22 +43,25 @@ const HEADLINE = [
 // Index of the first accent word — used to phase the "current" sheen across them.
 const FIRST_ACCENT = HEADLINE.findIndex((w) => typeof w === 'object' && w.accent);
 
-// A soft spring — a small overshoot, then settle. The whole hero shares it so
-// the entrance reads as one coordinated motion, not nine separate tweens.
-const SPRING = { type: 'spring', stiffness: 260, damping: 26, mass: 0.9 };
+// One shared ease-out (a long, gentle deceleration — easeOutExpo) so the whole
+// hero arrives as a single, silky coordinated motion. Everything animates ONLY
+// opacity + transform (translate/scale), which the compositor handles without a
+// repaint — the old version tweened filter:blur() on gradient text and the big
+// board SVG at once, which is what made the entrance stutter.
+const EASE = [0.16, 1, 0.3, 1];
 
-// Elements rise a touch and de-blur as they arrive.
+// Elements ease up a touch as they fade in.
 const riseIn = {
-  hidden: { opacity: 0, y: 18, filter: 'blur(8px)' },
-  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: SPRING },
+  hidden: { opacity: 0, y: 14 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.72, ease: EASE } },
 };
 const wordIn = {
-  hidden: { opacity: 0, y: '0.5em', filter: 'blur(10px)' },
-  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: SPRING },
+  hidden: { opacity: 0, y: '0.42em' },
+  show: { opacity: 1, y: 0, transition: { duration: 0.62, ease: EASE } },
 };
 const boardIn = {
-  hidden: { opacity: 0, scale: 0.9, y: 26, filter: 'blur(10px)' },
-  show: { opacity: 1, scale: 1, y: 0, filter: 'blur(0px)', transition: { ...SPRING, damping: 22 } },
+  hidden: { opacity: 0, scale: 0.95, y: 16 },
+  show: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.9, ease: EASE } },
 };
 // A container just orchestrates timing for its children.
 const orchestrate = (staggerChildren, delayChildren = 0) => ({
@@ -124,7 +127,7 @@ function HeroBand() {
         </div>
       </div>
 
-      <motion.div className="hero__stage" variants={orchestrate(0.13, 0.04)} {...anim}>
+      <motion.div className="hero__stage" variants={orchestrate(0.12, 0.12)} {...anim}>
         <div className="shell hero__in">
           <motion.div className="hero__copy" variants={orchestrate(0.09)}>
             <motion.p className="hero__eyebrow" variants={riseIn}>

@@ -1,5 +1,3 @@
-const REPO = 'https://github.com/Demetris22/Arduino-Project-Recommender';
-
 function SiteFooter() {
   return (
     <footer className="sitefooter">
@@ -10,11 +8,6 @@ function SiteFooter() {
             Demetris Demetriou
           </a>
           .
-        </p>
-        <p>
-          <a href={REPO} target="_blank" rel="noreferrer noopener">
-            View source ↗
-          </a>
         </p>
       </div>
     </footer>

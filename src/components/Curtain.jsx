@@ -19,27 +19,32 @@ export const useCurtainNav = () => useContext(CurtainCtx);
 
 const DURATION = 1; // seconds, whole sweep (cover + reveal)
 
-const P = (lx, lc, rx, rc) => `M ${lx} 0 Q ${lc} 0.5 ${lx} 1 L ${rx} 1 Q ${rc} 0.5 ${rx} 0 Z`;
+// ONE fixed shape that TRANSLATES across the screen: a flat trailing edge and a
+// convex (bulging) leading edge. Because the shape never morphs, the trailing
+// edge stays flat (no U-shaped tail) and the covered midpoint is seamless. In
+// 0..1 objectBoundingBox space; the shape is wider than the screen (W) so it
+// fully covers, and the leading edge's control point is pushed past its edge (B)
+// to make the bulge. `p` (0..1) slides the whole shape from off one side to off
+// the other; the screen is fully covered around p = 0.5.
+const W = 1.5;
+const B = 0.42;
+const LX0 = -1.85; // trailing edge fully off the entering side (hidden)
+const LX1 = 1.3;   // trailing edge fully off the exiting side (revealed)
 
-// keyframes [leftX, leftCtrl, rightX, rightCtrl] across the sweep. The right
-// (leading) edge bulges across to cover; then the left edge bulges across to
-// reveal. Control points pushed past the endpoints = the convex bulge.
-const KEYS = {
-  hidden: [0, 0, 0, 0],
-  coverMid: [0, 0, 0.12, 1.06],
-  covered: [0, 0, 1.18, 1.32],
-  revealMid: [0.42, 1.36, 1.2, 1.3],
-  revealed: [1.22, 1.34, 1.26, 1.36],
-};
-const ORDER = ['hidden', 'coverMid', 'covered', 'revealMid', 'revealed'];
-// back = the same sweep mirrored horizontally (x → 1 − x, left/right swapped).
-const mirror = ([lx, lc, rx, rc]) => [1 - rx, 1 - rc, 1 - lx, 1 - lc];
-const dOf = (dir, key) => P(...(dir === 'back' ? mirror(KEYS[key]) : KEYS[key]));
+function pathAt(p, dir) {
+  const lx = LX0 + (LX1 - LX0) * p;
+  const rx = lx + W;
+  const f = (n) => n.toFixed(3);
+  if (dir === 'back') {
+    // mirror horizontally: the bulge leads from the right, the flat edge trails
+    return `M ${f(1 - lx)} 0 L ${f(1 - lx)} 1 L ${f(1 - rx)} 1 Q ${f(1 - rx - B)} 0.5 ${f(1 - rx)} 0 Z`;
+  }
+  return `M ${f(lx)} 0 L ${f(lx)} 1 L ${f(rx)} 1 Q ${f(rx + B)} 0.5 ${f(rx)} 0 Z`;
+}
 
 const Curtain = memo(function Curtain({ dir, onMidpoint, onDone }) {
-  const stops = ORDER.map((k) => dOf(dir, k));
   const progress = useMotionValue(0);
-  const d = useTransform(progress, [0, 0.25, 0.5, 0.75, 1], stops);
+  const d = useTransform(progress, (p) => pathAt(p, dir));
 
   useEffect(() => {
     const controls = animate(progress, 1, { duration: DURATION, ease: 'easeInOut' });

@@ -59,11 +59,10 @@
     <text x="114" y="169" font-size="16" font-weight="700" fill="#14c3ca" letter-spacing="4">ARDUINO PROJECT CATALOG</text>
   </g>
 
-  <!-- headline: white lead (your kit), teal accent payoff (what you can build) -->
-  <g font-weight="800" letter-spacing="-1.5">
-    <text x="72" y="244" font-size="48" fill="#eef6f6">With your Arduino</text>
-    <text x="72" y="304" font-size="48" fill="#eef6f6">and parts,</text>
-    <text x="72" y="364" font-size="48" fill="#14c3ca">see what you can build.</text>
+  <!-- headline: short + punchy — white lead, teal accent -->
+  <g font-weight="800" letter-spacing="-2">
+    <text x="72" y="266" font-size="66" fill="#eef6f6">Build with</text>
+    <text x="72" y="344" font-size="66" fill="#14c3ca">what you&#8217;ve got</text>
   </g>
 
   <!-- subhead -->

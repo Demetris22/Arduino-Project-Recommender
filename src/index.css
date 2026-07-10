@@ -412,10 +412,10 @@ a { color: var(--teal-deep); }
 .hero__title {
   margin: 0 0 1.1rem;
   font-family: var(--font-display);
-  font-size: clamp(2.3rem, 5.4vw, 4.2rem);
+  font-size: clamp(2.7rem, 6.6vw, 5.4rem);
   font-weight: 800;
-  letter-spacing: -0.035em;
-  line-height: 0.98;
+  letter-spacing: -0.04em;
+  line-height: 0.96;
   text-wrap: balance;
 }
 /* each headline word is its own animated inline block; the tail phrase is teal.
@@ -453,7 +453,9 @@ a { color: var(--teal-deep); }
 }
 @media (prefers-reduced-motion: no-preference) {
   .hero__word--accent {
-    animation: title-current 3.4s linear infinite;
+    /* the sheen sweeps through the glyphs while the glow breathes — with the
+       per-word delay the pulse cascades along the phrase like current arriving */
+    animation: title-current 3.4s linear infinite, accent-glow 2.6s ease-in-out infinite;
     animation-delay: var(--sheen-delay, 0s);
   }
 }
@@ -461,6 +463,11 @@ a { color: var(--teal-deep); }
 @keyframes title-current {
   from { background-position: 120% 0, 0 0; }
   to { background-position: -80% 0, 0 0; }
+}
+/* the electric glow pulses, powering up and settling */
+@keyframes accent-glow {
+  0%, 100% { text-shadow: 0 0 20px rgba(20, 195, 202, 0.32); }
+  50% { text-shadow: 0 0 42px rgba(20, 195, 202, 0.72), 0 0 14px rgba(20, 195, 202, 0.5); }
 }
 
 .hero__title em {
